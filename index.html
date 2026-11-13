@@ -167,6 +167,64 @@ h2.sec small{font:500 15px var(--body);color:var(--muted)}
 .dlg .field{max-width:none;font-size:22px;text-align:left;margin:4px 0 14px}
 .dlg .endbtns{margin-top:16px}
 
+/* English actions row */
+.actions{display:grid;grid-template-columns:1fr;gap:12px}
+.actions:has(#gamesBtn:not([hidden])){grid-template-columns:repeat(3,minmax(0,1fr))}
+@media (max-width:620px){.actions:has(#gamesBtn:not([hidden])){grid-template-columns:1fr 1fr}.actions:has(#gamesBtn:not([hidden])) #subjAll{grid-column:1/-1}}
+.actions .bigbtn{margin-top:0}
+.bigbtn.games{background:var(--o2)}.bigbtn.sayb{background:var(--o3)}
+/* arcade */
+.vpic{display:inline-grid;place-items:center;font-size:52px;line-height:1}
+.vpic.xl{font-size:96px}
+.cblob{display:inline-block;width:1.1em;height:1.1em;border-radius:50%;border:3px solid var(--ink)}
+.npic{font:700 1em/1 var(--display);color:var(--blue)}
+.slots{display:flex;justify-content:center;gap:6px;margin:14px 0 6px;flex-wrap:nowrap}
+.slot{width:clamp(34px,11vw,48px);height:58px;border-bottom:5px solid var(--ink);display:grid;place-items:end center;font:700 40px/1 var(--display);text-transform:lowercase}
+.slot.miss{color:var(--red)}.slot.hint{color:#9aa6c8}
+.balloons{display:flex;justify-content:center;gap:4px;font-size:30px;min-height:40px}
+.bl.pop{opacity:.6}
+.keys{display:flex;flex-wrap:wrap;justify-content:center;gap:10px;margin-top:14px}
+.key{width:62px;height:62px;font:700 32px var(--display);background:var(--o4);border:3px solid var(--ink);border-radius:16px;box-shadow:0 4px 0 var(--ink)}
+.key.tile{background:var(--o1)}
+.key.good{background:var(--leaf);color:#fff}.key.bad{background:#eceef3;opacity:.45}.key.used{opacity:.25}
+.key:disabled{cursor:default}
+.shake{animation:shake .35s}
+.mgrid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-top:6px}
+@media (max-width:520px){.mgrid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.mcard{aspect-ratio:1/1;min-height:84px;border:3px solid var(--ink);border-radius:16px;box-shadow:0 4px 0 var(--ink);background:var(--violet);color:#fff;font:700 40px var(--display);position:relative;overflow:hidden}
+.mcard .front{display:none}.mcard .mback{display:grid;place-items:center;height:100%}
+.mcard.open{background:#fff;color:var(--ink)}.mcard.open .front{display:grid;place-items:center;height:100%}.mcard.open .mback{display:none}
+.mcard.done{background:#dcf2e4;border-color:var(--leaf)}
+.mword{font:700 clamp(18px,4vw,26px)/1.1 var(--display)}
+.pop{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;margin-top:8px}
+.ball{height:130px;border:3px solid var(--ink);border-radius:50% 50% 46% 46%;box-shadow:0 5px 0 var(--ink);background:radial-gradient(circle at 30% 25%,#fff8 0 18%,transparent 19%),var(--o3)}
+.ball:nth-child(2){background:radial-gradient(circle at 30% 25%,#fff8 0 18%,transparent 19%),var(--o1)}
+.ball:nth-child(3){background:radial-gradient(circle at 30% 25%,#fff8 0 18%,transparent 19%),var(--o2)}
+.ball:nth-child(4){background:radial-gradient(circle at 30% 25%,#fff8 0 18%,transparent 19%),var(--o4)}
+.ball.popped{background:var(--leaf)!important;transform:scale(1.08)}
+.ball.wrongb{opacity:.35}
+.pond{position:relative;height:340px;margin-top:6px;border:3px solid var(--ink);border-radius:20px;overflow:hidden;
+  background:linear-gradient(#cfeaff 0 12%,#8fd0f7 12% 100%)}
+.net{position:absolute;right:10px;top:8px;font:700 20px var(--display);background:#fff;border:2.5px solid var(--ink);border-radius:999px;padding:2px 12px;z-index:2}
+.fish{position:absolute;left:0;padding:0;border:0;background:none;animation-name:swim;animation-timing-function:linear;animation-fill-mode:forwards}
+.fbody{display:flex;align-items:center;gap:6px;padding:6px 14px 6px 10px;background:#ffd56b;border:3px solid var(--ink);border-radius:40px 60% 60% 40px;box-shadow:0 3px 0 var(--ink);white-space:nowrap}
+.fbody .vpic{font-size:38px}.fbody small{font:700 18px var(--display)}
+.fish.caught .fbody{background:var(--leaf);color:#fff}
+@keyframes swim{from{transform:translateX(-170px)}to{transform:translateX(var(--to,700px))}}
+.saybtns{display:flex;flex-wrap:wrap;gap:12px;justify-content:center;margin-top:14px}
+.sayhelp{margin:12px auto 0;text-align:center;font:700 34px var(--display);color:var(--blue)}
+.sayhelp small{display:block;font:400 18px var(--body);color:var(--muted)}
+.heard{min-height:26px;text-align:center;margin:10px 0 0;font:600 18px var(--display);color:var(--muted)}
+.heard.ok{color:var(--leaf)}.heard.bad{color:var(--red)}
+.sayinfo{text-align:center;color:var(--muted);font-size:16px;margin:10px 0 0}
+.nosound{text-align:center;color:var(--muted)}
+.rwrap{display:grid!important;place-items:center}
+.rwrap[hidden]{display:none!important}
+.rcard{max-width:420px;width:100%;padding:22px 18px;text-align:center}
+.rtitle{margin:0;font:700 26px var(--display);color:var(--leaf)}
+.rword{margin:6px 0 4px;font:700 44px var(--display)}
+.rs{margin:0;font:600 22px var(--display);color:var(--blue)}
+.rses{margin:4px 0 6px;color:var(--muted);font-size:17px}
 #confetti{position:fixed;inset:0;pointer-events:none;z-index:40}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style>
@@ -201,7 +259,11 @@ h2.sec small{font:500 15px var(--body);color:var(--muted)}
       <button class="gear" id="gear2" type="button" aria-label="Ajustes">⚙️</button>
     </header>
     <div class="chips" id="chips" hidden></div>
-    <button class="bigbtn sticker" id="subjAll" type="button"><span aria-hidden="true">🏆</span><div><div id="subjAllT"></div><small id="subjAllS"></small></div></button>
+    <div class="actions">
+      <button class="bigbtn sticker" id="subjAll" type="button"><span aria-hidden="true">🏆</span><div><div id="subjAllT"></div><small id="subjAllS"></small></div></button>
+      <button class="bigbtn sticker games" id="gamesBtn" type="button" hidden><span aria-hidden="true">🎮</span><div><div>Games</div><small>Random word games</small></div></button>
+      <button class="bigbtn sticker sayb" id="sayBtn" type="button" hidden><span aria-hidden="true">🗣️</span><div><div>Say it!</div><small>Speak in English</small></div></button>
+    </div>
     <div id="temas"></div>
   </section>
 
@@ -221,6 +283,27 @@ h2.sec small{font:500 15px var(--body);color:var(--muted)}
     <div class="opts" id="opts"></div>
     <div class="feedback" id="fb" aria-live="polite"></div>
     <button class="next" id="next" type="button" hidden>Siguiente →</button>
+  </section>
+
+  <section id="arcade" hidden>
+    <div class="bar">
+      <button class="back" id="aback" type="button">← Exit</button>
+      <div class="dots" id="adots" aria-label="Progress"></div>
+      <button class="voice" id="aes" type="button" aria-label="En español" hidden>🇪🇸</button>
+      <button class="voice" id="avoice" type="button" aria-label="Listen">🔊</button>
+    </div>
+    <p class="tag" id="atitle"></p>
+    <div id="stage"></div>
+    <div class="dlg rwrap" id="reward" hidden>
+      <div class="sticker rcard">
+        <p class="rtitle" id="rtitle"></p>
+        <div id="rpic"></div>
+        <p class="rword" id="rword"></p>
+        <p class="rs" id="rs"></p>
+        <p class="rses" id="rses"></p>
+        <button class="next" id="rnext" type="button">Next →</button>
+      </div>
+    </div>
   </section>
 
   <section id="end" hidden>
@@ -514,8 +597,8 @@ function speak(parts,force){if(!force&&!cfg.voice)return;try{const s=window.spee
 
 /* ================= state & navigation ================= */
 let screen='home',ctx=null,qs=[],qi=0,stars=0,first=true,answered=false,cur=null,roundFails=[];
-function show(id){screen=id;['welcome','home','subject','game','end'].forEach(s=>$(s).hidden=s!==id);
-  $('nav').hidden=(id==='game'||id==='welcome');
+function show(id){screen=id;['welcome','home','subject','game','arcade','end'].forEach(s=>$(s).hidden=s!==id);
+  $('nav').hidden=(id==='game'||id==='welcome'||id==='arcade');
   document.querySelectorAll('.nav button').forEach(b=>b.removeAttribute('aria-current'));
   if(id==='home')document.querySelector('[data-nav=home]').setAttribute('aria-current','page');
   updateFailCount();window.scrollTo(0,0);}
@@ -544,6 +627,7 @@ function renderSubject(id){
   }else $('chips').hidden=true;
   const temas=visibleTemas(s).filter(temaHasContent);
   $('subjAll').hidden=!temas.length;
+  const isEN=s.id==='ingles'&&temas.length;$('gamesBtn').hidden=!isEN;$('sayBtn').hidden=!isEN;
   const srcName=s.sources&&cfg.src!=='all'?' ('+s.sources.find(x=>x[0]===cfg.src)[1]+')':'';
   $('subjAllT').textContent=t_.allSubj(s.nm)+srcName;$('subjAllS').textContent=t_.allSubjSb;
   let h='';
@@ -634,7 +718,7 @@ function finish(){
   $('again').hidden=ctx.kind==='fails'&&!failed.length;
   show('end');sWin();speak([[t+' '+x,ctx.ui]]);if(stars>=total*.75)confetti();
 }
-function leave(){try{speechSynthesis.cancel()}catch(e){}
+function leave(){try{speechSynthesis.cancel()}catch(e){}stopArcade();
   if(ctx&&ctx.from==='subject'&&curSubj)renderSubject(curSubj.id);else renderHome();}
 
 /* ================= launchers ================= */
@@ -703,16 +787,209 @@ function confetti(){
     if(t-t0<3200)requestAnimationFrame(f);else{cx.clearRect(0,0,c.width,c.height);c.hidden=true}})(t0);
 }
 
+/* =====================================================================
+   ENGLISH · GAMES & SAY IT
+   All games read from VOC, which is built from the V lists above.
+   New English vocabulary added to V shows up in every game by itself.
+   ===================================================================== */
+const ART={lion:'el león',elephant:'el elefante',monkey:'el mono',giraffe:'la jirafa',tiger:'el tigre',zebra:'la cebra',snake:'la serpiente',bear:'el oso',
+  crocodile:'el cocodrilo',hippo:'el hipopótamo',penguin:'el pingüino',kangaroo:'el canguro',cat:'el gato',bat:'el murciélago',monster:'el monstruo',
+  ghost:'el fantasma',zombie:'el zombi',spider:'la araña',eyes:'los ojos',mouth:'la boca',nose:'la nariz',ears:'las orejas',hands:'las manos',legs:'las piernas'};
+const ACT_ES={jump:'saltar',run:'correr','crouch down':'agacharnos','sit down':'sentarnos','stand up':'ponernos de pie',clap:'dar palmas',dance:'bailar',swim:'nadar'};
+const CAT_NAME={colours:'COLOURS',zoo:'ANIMALS',halloween:'HALLOWEEN',emotions:'FEELINGS',body:'BODY',numbers:'NUMBERS',actions:'ACTIONS'};
+const CAT_ES={colours:'los colores',zoo:'los animales',halloween:'los de Halloween',emotions:'las caras',body:'las partes del cuerpo',numbers:'los números',actions:'las acciones'};
+function buildVocab(){const L=[];const art=(w,es)=>ART[w]||('el '+es);
+  V.colours.forEach(([w,hex,es])=>L.push({w,es,cat:'colours',pic:`<span class="cblob" style="background:${hex}"></span>`,s:`I like ${w}.`,ses:`Me gusta el ${es}.`}));
+  V.zoo.forEach(([w,e,es])=>L.push({w,es,cat:'zoo',pic:e,s:`Look at the ${w}!`,ses:`¡Mira ${art(w,es)}!`}));
+  V.halloween.forEach(([w,e,es])=>L.push({w,es,cat:'halloween',pic:e,s:`Look at the ${w}!`,ses:`¡Mira ${art(w,es)}!`}));
+  V.emotions.forEach(([w,e,es])=>L.push({w,es,cat:'emotions',pic:e,s:`I am ${w}.`,ses:`Estoy ${es}.`}));
+  V.body.forEach(([w,e,es])=>L.push({w,es,cat:'body',pic:e,s:`Touch your ${w}!`,ses:`¡Tócate ${art(w,es)}!`}));
+  V.actions.forEach(([w,e,es])=>L.push({w,es,cat:'actions',pic:e,s:`Let's ${w}!`,ses:`¡Vamos a ${ACT_ES[w]||es}!`}));
+  V.dirs.forEach(([w,e,es])=>L.push({w,es,cat:'dirs',pic:e,s:`Go ${w}!`,ses:`¡Ve hacia ${es}!`}));
+  V.numbers.forEach((w,n)=>{if(n)L.push({w,es:String(n),cat:'numbers',pic:`<span class="npic">${n}</span>`,s:`I can count to ${w}!`,ses:`¡Sé contar hasta el ${n}!`})});
+  V.days.forEach((w,i)=>L.push({w,es:V.daysEs[i],cat:'days',pic:null,s:`Today is ${w}.`,ses:`Hoy es ${V.daysEs[i]}.`}));
+  return L;}
+const VOC=buildVocab();
+const picVoc=()=>VOC.filter(v=>v.pic);
+const shortWords=n=>picVoc().filter(v=>/^[a-z]+$/.test(v.w)&&v.w.length>=3&&v.w.length<=n);
+const pic=(v,cls='')=>`<span class="vpic ${cls}">${v.pic}</span>`;
+function others(v,n){return shuffle(picVoc().filter(x=>x.w!==v.w&&x.cat===v.cat)).concat(shuffle(picVoc().filter(x=>x.cat!==v.cat))).slice(0,n)}
+
+let AR=null; /* current arcade game state */
+const timers=new Set();
+function later(fn,ms){const t=setTimeout(()=>{timers.delete(t);fn()},ms);timers.add(t);return t}
+function stopArcade(){timers.forEach(clearTimeout);timers.clear();if(AR&&AR.spawn)clearInterval(AR.spawn);if(AR&&AR.rec)try{AR.rec.abort()}catch(e){}}
+function arcadeScreen(title,n){stopArcade();ctx={kind:'arcade',from:'subject',ui:'en',lang:'en'};$('atitle').textContent=title;$('reward').hidden=true;$('stage').innerHTML='';
+  $('adots').innerHTML=Array.from({length:n},(_,i)=>`<span class="dot${i===0?' now':''}"></span>`).join('');show('arcade');}
+function setDot(i,res){const d=$('adots').children;if(d[i])d[i].className='dot '+(res||'');if(d[i+1])d[i+1].className='dot now'}
+function setQ(en,es,say){AR.q={en,es,say:say||strip(en)};$('aq').innerHTML=en;$('aqes').hidden=true;$('aqes').textContent=es||'';$('aes').hidden=!es;}
+function stageHTML(h){$('stage').innerHTML=`<div class="qcard sticker"><p class="qtext" id="aq"></p><p class="qes" id="aqes" hidden></p>${h}</div>`}
+
+/* reward card after each word: picture, word, a tiny sentence + Spanish */
+function reward(v,ok,after){
+  $('rpic').innerHTML=v.pic?pic(v,'xl'):'📅';$('rtitle').textContent=ok?withName(pick(GOOD_EN)):'The word is…';
+  $('rword').textContent=v.w;$('rs').textContent=v.s;$('rses').textContent=v.ses;$('reward').hidden=false;
+  $('rnext').onclick=()=>{$('reward').hidden=true;after()};
+  if(ok)sGood();speak([[v.w+'. '+v.s,'en']]);
+}
+function finishArcade(st,total,kind){stopArcade();
+  ctx={kind,from:'subject',ui:'en',lang:'en'};
+  $('endstars').textContent='⭐'.repeat(st)+'☆'.repeat(Math.max(0,total-st));
+  const N=NAME(),U=L('en');let t,x;
+  if(st>=total){t=U.e1(N);x=kind==='say'?'You said everything! 🗣️':'You won the game! 🎮'}
+  else if(st>=total*.6){t=U.e2(N);x=U.x2(st,total)}else{t=U.e3;x="Let's play again!"}
+  $('endtitle').textContent=t;$('endtext').textContent=x;$('redo').hidden=true;$('again').hidden=false;
+  $('again').textContent=kind==='say'?'🗣️ Say more':'🎲 Another game';$('leave').textContent=U.leave;
+  show('end');sWin();speak([[t,'en']]);if(st>=total*.6)confetti();}
+
+/* ---------- 1 · Hangman with balloons ---------- */
+function gHangman(){const items=shuffle(shortWords(6)).slice(0,4);AR={name:'hangman',i:0,st:0,items};arcadeScreen('🎈 Balloon words',items.length);hmItem();}
+function hmItem(){const v=AR.items[AR.i];AR.found=new Set();AR.lives=6;
+  const L_=new Set(v.w);const abc='abcdefghiklmnoprstuwy';let g=0;while(L_.size<Math.min(10,new Set(v.w).size+5)&&g++<99)L_.add(abc[R(0,abc.length-1)]);
+  stageHTML(`<div class="visual">${pic(v,'xl')}</div><div class="slots" id="slots"></div><div class="balloons" id="balloons"></div><div class="keys" id="keys"></div>`);
+  setQ('Guess the word!','Adivina la palabra: toca las letras.');
+  $('slots').innerHTML=[...v.w].map(c=>`<span class="slot" data-c="${c}"></span>`).join('');
+  $('balloons').innerHTML=Array.from({length:6},()=>'<span class="bl">🎈</span>').join('');
+  $('keys').innerHTML=shuffle([...L_]).map(c=>`<button class="key" type="button" data-k="${c}">${c}</button>`).join('');
+  speak([['Guess the word!','en']]);
+  $('keys').onclick=e=>{const b=e.target.closest('.key');if(!b||b.disabled)return;b.disabled=true;const c=b.dataset.k;
+    if(v.w.includes(c)){b.classList.add('good');tone([[700,.1]]);document.querySelectorAll(`#slots .slot[data-c="${c}"]`).forEach(s=>s.textContent=c);
+      if([...v.w].every(ch=>document.querySelector(`#slots .slot[data-c="${ch}"]`).textContent)){$('keys').onclick=null;AR.st++;setDot(AR.i,'star');later(()=>reward(v,true,hmNext),500)}}
+    else{b.classList.add('bad');sBad();AR.lives--;const bl=$('balloons').querySelectorAll('.bl:not(.pop)');if(bl.length)bl[bl.length-1].classList.add('pop'),bl[bl.length-1].textContent='💥';
+      if(AR.lives<=0){$('keys').onclick=null;document.querySelectorAll('#slots .slot').forEach(s=>{if(!s.textContent){s.textContent=s.dataset.c;s.classList.add('miss')}});setDot(AR.i,'');later(()=>reward(v,false,hmNext),900)}}};
+}
+function hmNext(){AR.i++;if(AR.i>=AR.items.length)return finishArcade(AR.st,AR.items.length,'arcade');hmItem();}
+
+/* ---------- 2 · Memory pairs ---------- */
+function gMemory(){const items=shuffle(picVoc()).filter((v,i,a)=>a.findIndex(x=>x.pic===v.pic)===i).slice(0,4);
+  AR={name:'memory',items,open:[],moves:0,matched:0,lock:false};arcadeScreen('🃏 Memory',1);
+  stageHTML(`<div class="mgrid" id="mgrid"></div>`);setQ('Find the pairs!','Busca las parejas: el dibujo con su palabra.');
+  const cards=shuffle(items.flatMap((v,i)=>[{i,face:pic(v)},{i,face:`<span class="mword">${v.w}</span>`}]));
+  $('mgrid').innerHTML=cards.map((c,k)=>`<button class="mcard" type="button" data-i="${c.i}" data-k="${k}"><span class="mback">?</span><span class="front">${c.face}</span></button>`).join('');
+  speak([['Find the pairs!','en']]);
+  $('mgrid').onclick=e=>{const b=e.target.closest('.mcard');if(!b||AR.lock||b.classList.contains('open'))return;b.classList.add('open');AR.open.push(b);
+    if(AR.open.length<2)return;AR.moves++;const [a,c]=AR.open;AR.open=[];
+    if(a.dataset.i===c.dataset.i){a.classList.add('done');c.classList.add('done');AR.matched++;const v=AR.items[+a.dataset.i];sGood();speak([[v.w,'en']]);
+      if(AR.matched===AR.items.length){const st=Math.max(1,5-Math.max(0,AR.moves-5));later(()=>finishArcade(st,5,'arcade'),900)}}
+    else{AR.lock=true;sBad();later(()=>{a.classList.remove('open');c.classList.remove('open');AR.lock=false},900)}};
+}
+
+/* ---------- 3 · Unscramble the letters ---------- */
+function gScramble(){const items=shuffle(shortWords(6)).slice(0,4);AR={name:'scramble',i:0,st:0,items};arcadeScreen('🔤 Letter mix',items.length);scItem();}
+function scItem(){const v=AR.items[AR.i];AR.pos=0;AR.miss=0;let mix;do{mix=shuffle([...v.w])}while(mix.join('')===v.w&&v.w.length>1);
+  stageHTML(`<div class="visual">${pic(v,'xl')}</div><div class="slots" id="slots">${[...v.w].map(()=>'<span class="slot"></span>').join('')}</div><div class="keys" id="keys">${mix.map((c,k)=>`<button class="key tile" type="button" data-k="${c}">${c}</button>`).join('')}</div>`);
+  setQ('Make the word!','Ordena las letras para formar la palabra.');speak([['Make the word!','en']]);
+  $('keys').onclick=e=>{const b=e.target.closest('.key');if(!b||b.disabled)return;
+    if(b.dataset.k===v.w[AR.pos]){b.disabled=true;b.classList.add('used');$('slots').children[AR.pos].textContent=b.dataset.k;AR.pos++;tone([[700,.08]]);
+      if(AR.pos===v.w.length){$('keys').onclick=null;const ok=AR.miss<=1;if(ok)AR.st++;setDot(AR.i,ok?'star':'ok');later(()=>reward(v,true,scNext),400)}}
+    else{AR.miss++;b.classList.add('shake');sBad();later(()=>b.classList.remove('shake'),400);
+      if(AR.miss===2){const s=$('slots').children[AR.pos];s.classList.add('hint');s.textContent=v.w[AR.pos];later(()=>{if(s.classList.contains('hint')){s.textContent='';s.classList.remove('hint')}},1200)}}};
+}
+function scNext(){AR.i++;if(AR.i>=AR.items.length)return finishArcade(AR.st,AR.items.length,'arcade');scItem();}
+
+/* ---------- 4 · Listen and pop ---------- */
+function gListen(){const items=shuffle(picVoc()).slice(0,6);AR={name:'listen',i:0,st:0,items};arcadeScreen('👂 Listen and pop',items.length);liItem();}
+function liItem(){const v=AR.items[AR.i];AR.first=true;const opts=shuffle([v,...others(v,3)]);
+  stageHTML(`<div class="pop" id="pop">${opts.map(o=>`<button class="ball" type="button" data-w="${o.w}">${pic(o)}</button>`).join('')}</div>
+    <p class="nosound" id="nosound" hidden>🔇 Pon el volumen y toca 🔊</p>`);
+  setQ('Listen and pop the balloon!','Escucha la palabra y explota el globo correcto.',`Pop the ${v.w}!`);
+  AR.q.say=v.w;later(()=>speak([['Pop the '+v.w+'!','en']],true),300);
+  $('pop').onclick=e=>{const b=e.target.closest('.ball');if(!b||b.disabled)return;
+    if(b.dataset.w===v.w){b.classList.add('popped');$('pop').onclick=null;if(AR.first)AR.st++;setDot(AR.i,AR.first?'star':'ok');later(()=>reward(v,true,liNext),450)}
+    else{AR.first=false;b.disabled=true;b.classList.add('wrongb');sBad();later(()=>speak([['Listen: '+v.w,'en']],true),400)}};
+}
+function liNext(){AR.i++;if(AR.i>=AR.items.length)return finishArcade(AR.st,AR.items.length,'arcade');liItem();}
+
+/* ---------- 5 · Fishing: catch only one group ---------- */
+function gFishing(){const cats=Object.keys(CAT_NAME).filter(c=>picVoc().filter(v=>v.cat===c).length>=3);const cat=pick(cats);
+  AR={name:'fishing',cat,caught:0,wrong:0,goal:5};arcadeScreen('🎣 Fishing',AR.goal);
+  stageHTML(`<div class="pond" id="pond"><div class="net" id="net">🪣 0 / ${AR.goal}</div></div>`);
+  setQ(`Catch the <em>${CAT_NAME[cat]}</em>!`,`Pesca solo ${CAT_ES[cat]}.`,`Catch the ${CAT_NAME[cat].toLowerCase()}!`);
+  speak([['Catch the '+CAT_NAME[cat].toLowerCase()+'!','en']]);
+  const reduce=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches;let lane=0;
+  const spawn=()=>{const pond=$('pond');if(!pond)return;const good=Math.random()<.55;
+    const v=good?pick(picVoc().filter(x=>x.cat===cat)):pick(picVoc().filter(x=>x.cat!==cat));
+    const f=document.createElement('button');f.type='button';f.className='fish';f.dataset.ok=good?'1':'';f.dataset.w=v.w;
+    f.innerHTML=`<span class="fbody">${pic(v)}<small>${v.w}</small></span>`;lane=(lane+1)%3;f.style.top=(14+lane*30)+'%';
+    const W=pond.clientWidth;
+    if(reduce){f.style.left=R(5,Math.max(6,W-150))+'px';later(()=>f.remove(),4000)}
+    else{f.style.setProperty('--to',(W+20)+'px');f.style.animationDuration=(6+Math.random()*2.5)+'s';f.addEventListener('animationend',()=>f.remove())}
+    pond.appendChild(f);};
+  spawn();later(spawn,700);AR.spawn=setInterval(spawn,1500);
+  $('pond').onclick=e=>{const f=e.target.closest('.fish');if(!f||f.classList.contains('caught'))return;
+    if(f.dataset.ok){f.classList.add('caught');AR.caught++;setDot(AR.caught-1,'star');sGood();speak([[f.dataset.w,'en']]);$('net').textContent=`🪣 ${AR.caught} / ${AR.goal}`;later(()=>f.remove(),500);
+      if(AR.caught>=AR.goal){clearInterval(AR.spawn);later(()=>finishArcade(Math.max(1,5-Math.min(4,AR.wrong)),5,'arcade'),700)}}
+    else{AR.wrong++;f.classList.add('shake');sBad();later(()=>f.classList.remove('shake'),400)}};
+}
+
+const GAMES=[gHangman,gMemory,gScramble,gListen,gFishing];let lastGame=-1;
+function playGames(){let k;do{k=R(0,GAMES.length-1)}while(k===lastGame&&GAMES.length>1);lastGame=k;GAMES[k]();}
+
+/* ---------- Say it! (speech recognition, with a parent-check fallback) ---------- */
+const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+let srBroken=false;
+const norm=t=>t.toLowerCase().replace(/\b(\d+)\b/g,(m,d)=>V.numbers[+d]||m).replace(/[^a-z ]/g,' ').replace(/\s+/g,' ').trim();
+function lev(a,b){const d=Array.from({length:a.length+1},(_,i)=>[i]);for(let j=1;j<=b.length;j++)d[0][j]=j;
+  for(let i=1;i<=a.length;i++)for(let j=1;j<=b.length;j++)d[i][j]=Math.min(d[i-1][j]+1,d[i][j-1]+1,d[i-1][j-1]+(a[i-1]===b[j-1]?0:1));return d[a.length][b.length]}
+function heardOK(alts,target,key){const T=norm(target).split(' ');const K=key?norm(key).split(' '):null;
+  return alts.some(a=>{const W=norm(a).split(' ');
+    if(T.length<=2){const tj=T.join(' ');const aj=W.join(' ');return aj.includes(tj)||W.some(w=>w.length>=3&&lev(w,T[T.length-1])<=(T[T.length-1].length>=5?2:1))}
+    const has=t=>W.some(w=>w===t||(t.length>=4&&lev(w,t)<=1));const hit=T.filter(has).length;return hit/T.length>=.6&&(!K||K.every(has));});}
+function playSay(){const words=shuffle(VOC).slice(0,4).map(v=>({v,kind:'word'}));const phr=shuffle(picVoc()).slice(0,2).map(v=>({v,kind:'phrase'}));
+  const items=shuffle(words).concat(phr);AR={name:'say',i:0,st:0,items};arcadeScreen('🗣️ Say it!',items.length);sayItem();}
+function sayItem(){const it=AR.items[AR.i],v=it.v;AR.tries=0;AR.helped=false;
+  const target=it.kind==='word'?v.w:v.s;AR.target=target;AR.key=it.kind==='phrase'?v.w:null;
+  const canListen=SR&&!srBroken;
+  stageHTML(`<div class="visual">${v.pic?pic(v,'xl'):'<span class="vpic xl">📅</span>'}</div>
+    <div class="sayhelp" id="sayhelp" hidden></div>
+    <p class="heard" id="heard" aria-live="polite"></p>
+    <div class="saybtns">
+      <button class="btn blue" id="mic" type="button" ${canListen?'':'hidden'}>🎤 Say it!</button>
+      <button class="btn" id="shelp" type="button">💡 Help</button>
+      <button class="btn yellow" id="sdone" type="button" ${canListen?'hidden':''}>✅ I said it!</button>
+    </div>
+    <p class="sayinfo" id="sayinfo">${canListen?'':'Dilo en voz alta y, si está bien, toca ✅.'}</p>`);
+  if(it.kind==='word')setQ(v.pic?'How do you say this in English?':`How do you say <em>${v.es}</em>?`,`¿Cómo se dice «${v.es}» en inglés?`);
+  else{setQ(`Repeat: <em>${v.s}</em>`,`Repite: «${v.ses}»`,'Repeat: '+v.s);}
+  speak([[AR.q.say,'en']]);
+  $('shelp').onclick=()=>{AR.helped=true;$('sayhelp').hidden=false;$('sayhelp').innerHTML=`<b>${target}</b><small>${it.kind==='word'?v.es:v.ses}</small>`;speak([[target,'en'],[it.kind==='word'?v.es:v.ses,'es']],true);$('sdone').hidden=false;};
+  $('sdone').onclick=()=>sayOK(true);
+  $('mic').onclick=()=>listen();
+}
+function sayOK(manual){const v=AR.items[AR.i].v;const star=!AR.helped&&AR.tries<=1;if(star)AR.st++;setDot(AR.i,star?'star':'ok');
+  if(AR.rec)try{AR.rec.abort()}catch(e){}
+  reward(v,true,()=>{AR.i++;if(AR.i>=AR.items.length)return finishArcade(AR.st,AR.items.length,'say');sayItem();});}
+function listen(){if(!SR)return;try{speechSynthesis.cancel()}catch(e){}
+  const rec=new SR();AR.rec=rec;rec.lang='en-GB';rec.interimResults=false;rec.maxAlternatives=5;
+  $('mic').disabled=true;$('mic').textContent='👂 Listening…';$('heard').textContent='';
+  let got=false;
+  rec.onresult=e=>{got=true;const alts=[...e.results[0]].map(a=>a.transcript);AR.tries++;
+    $('heard').textContent='I heard: “'+alts[0]+'”';
+    if(heardOK(alts,AR.target,AR.key)){$('heard').className='heard ok';sayOK(false)}
+    else{$('heard').className='heard bad';sBad();$('sayinfo').textContent=AR.tries>=2?'¡Casi! Toca 💡 para escucharlo, o ✅ si lo ha dicho bien.':'¡Casi! Inténtalo otra vez.';
+      if(AR.tries>=2)$('sdone').hidden=false;}};
+  rec.onerror=e=>{if(e.error==='not-allowed'||e.error==='service-not-allowed'||e.error==='audio-capture'){srBroken=true;$('mic').hidden=true;$('sdone').hidden=false;
+      $('sayinfo').textContent='Este navegador no puede usar el micrófono. Dilo en voz alta y toca ✅ si está bien.'}
+    else if(e.error==='no-speech'){$('sayinfo').textContent='No te he oído. Toca 🎤 y habla más alto.'}};
+  rec.onend=()=>{const m=$('mic');if(m){m.disabled=false;m.textContent='🎤 Say it!'}};
+  try{rec.start()}catch(e){srBroken=true;$('mic').hidden=true;$('sdone').hidden=false;}
+}
+
 /* ================= events ================= */
 $('subjects').addEventListener('click',e=>{const b=e.target.closest('[data-s]');if(b&&!b.classList.contains('soon'))renderSubject(b.dataset.s)});
 $('temas').addEventListener('click',e=>{const b=e.target.closest('[data-w]');if(b)playWorld(b.dataset.t,b.dataset.w)});
 $('chips').addEventListener('click',e=>{const b=e.target.closest('[data-src]');if(b){cfg.src=b.dataset.src;store.set('cfg',cfg);renderSubject(curSubj.id)}});
 $('subjAll').addEventListener('click',playSubject);
+$('gamesBtn').addEventListener('click',playGames);
+$('sayBtn').addEventListener('click',playSay);
+$('aback').addEventListener('click',()=>{stopArcade();leave()});
+$('avoice').addEventListener('click',()=>{if(AR&&AR.q)speak([[AR.q.say,'en']],true)});
+$('aes').addEventListener('click',()=>{if(!AR||!AR.q||!AR.q.es)return;$('aqes').hidden=false;speak([[AR.q.es,'es']],true)});
 $('opts').addEventListener('click',e=>{const b=e.target.closest('.opt');if(b&&!b.disabled)answer(+b.dataset.i,b)});
 $('next').addEventListener('click',next);
 $('back').addEventListener('click',leave);
 $('leave').addEventListener('click',leave);
-$('again').addEventListener('click',()=>{if(ctx.kind==='fails')playFails();else if(ctx.kind==='redo')startGame(ctx.parent);else startGame(ctx)});
+$('again').addEventListener('click',()=>{if(ctx.kind==='arcade')return playGames();if(ctx.kind==='say')return playSay();if(ctx.kind==='fails')playFails();else if(ctx.kind==='redo')startGame(ctx.parent);else startGame(ctx)});
 $('redo').addEventListener('click',()=>startGame({kind:'redo',list:roundFails.slice(),from:ctx.from,label:ctx.lang==='en'?'Missed':'Falladas',lang:ctx.lang,parent:ctx.kind==='redo'?ctx.parent:ctx}));
 $('voice').addEventListener('click',()=>{if(cur)speak([[cur.say,cur.lang]],true)});
 $('tr').addEventListener('click',()=>{if(!cur||!cur.es)return;$('qes').hidden=false;speak(cur.es.split(/([A-Z]{2,}(?: [A-Z]{2,})*)/).map((t,i)=>[i%2?t.toLowerCase():t,i%2?'en':'es']).filter(x=>x[0].trim()),true)});
@@ -720,7 +997,7 @@ $('nav').addEventListener('click',e=>{const b=e.target.closest('[data-nav]');if(
   try{speechSynthesis.cancel()}catch(err){}
   if(b.dataset.nav==='home')renderHome();else if(b.dataset.nav==='mix')playAll();else playFails();});
 
-window.__rep={G,SUBJECTS,buildRound,worldsOf};
+window.__rep={G,SUBJECTS,buildRound,worldsOf,VOC,heardOK,GAMES,playSay};
 if(cfg.welcomed||cfg.name)renderHome();else show('welcome');
 })();
 </script>
