@@ -70,7 +70,7 @@ h2.sec small{font:500 15px var(--body);color:var(--muted)}
 .chip[aria-pressed="true"]{background:var(--ink);color:#fff}
 
 .bigbtn{display:flex;align-items:center;gap:14px;width:100%;padding:14px 18px;margin-top:6px;text-align:left;font:700 21px var(--display);background:var(--sun)}
-.bigbtn span{font-size:34px}
+.bigbtn>span{font-size:34px}
 .bigbtn small{display:block;font:400 15px var(--body);color:var(--ink)}
 
 /* Bottom nav: floating pill */
@@ -117,6 +117,9 @@ h2.sec small{font:500 15px var(--body);color:var(--muted)}
 .eq{font:600 clamp(34px,8vw,48px)/1.2 var(--display);text-align:center}
 .eq b{color:var(--red)}
 .big{font-size:96px;line-height:1.05}
+.lword{font:600 clamp(30px,7vw,42px)/1.2 var(--display);letter-spacing:.03em;text-align:center;margin:6px 0 0}
+.lword b{color:var(--red)}
+.visual .lword{width:100%}
 .blob{width:120px;height:120px;border-radius:50%;border:4px solid var(--ink);box-shadow:0 5px 0 var(--ink)}
 .price{display:flex;flex-direction:column;align-items:center;gap:4px}
 .price span{font:600 20px var(--display);background:var(--sun);border:2.5px solid var(--ink);border-radius:10px;padding:2px 10px}
@@ -127,6 +130,7 @@ h2.sec small{font:500 15px var(--body);color:var(--muted)}
 .opt:nth-child(4n+1){background:var(--o1)}.opt:nth-child(4n+2){background:var(--o2)}
 .opt:nth-child(4n+3){background:var(--o3)}.opt:nth-child(4n+4){background:var(--o4)}
 .opt:active{transform:translateY(3px);box-shadow:0 2px 0 var(--ink)}
+.opts .opt{min-width:0}
 .opt .num{font-size:46px;font-variant-numeric:tabular-nums}
 .opt .emo{font-size:58px;line-height:1}
 .opt .sw{width:64px;height:64px;border-radius:50%;border:3px solid var(--ink)}
@@ -483,6 +487,69 @@ const G={
   daCinco(){const t=R(3,9),ra=R(0,t),right=`${ra} + ${t-ra}`;const w=new Set();while(w.size<2){const x=R(0,8),y=R(0,10-x);if(x+y!==t)w.add(`${x} + ${y}`)}
     return{q:`¿Qué operación da ${t}?`,say:`¿Qué operación da ${t}?`,v:`<div class="eq"><b>${t}</b></div>`,o:shuffle([[right,'ok'],...[...w].map(s=>[s,s])]).map(x=>({label:x[0],value:x[1]})),a:'ok',h:`${right} = ${t}.`}},
 
+  /* ================= LENGUA ================= */
+  /* Unidad 1 · vocales y sílabas */
+  leVocalInicio(){const W=[['abeja','🐝'],['árbol','🌳'],['avión','✈️'],['ardilla','🐿️'],['araña','🕷️'],['ancla','⚓'],
+      ['elefante','🐘'],['estrella','⭐'],['erizo','🦔'],['escoba','🧹'],['isla','🏝️'],['iglesia','⛪'],['imán','🧲'],
+      ['oso','🐻'],['ojo','👁️'],['oveja','🐑'],['ola','🌊'],['uva','🍇'],['unicornio','🦄'],['uña','💅']];
+    const [w,e]=pick(W);const v=w[0].normalize('NFD')[0].toUpperCase();
+    return{q:'¿Con qué vocal empieza?',say:`${w}. ¿Con qué vocal empieza ${w}?`,v:`<div class="big">${e}</div><p class="lword"><b>_</b>${w.slice(1)}</p>`,
+      o:['A','E','I','O','U'].map(x=>({label:`<span class="num">${x}</span>`,value:x})),cols:5,a:v,h:`${w[0].toUpperCase()+w.slice(1)} empieza por <b>${v}</b>: ${v}… ${w}.`}},
+  leVocalFalta(){const W=[['pato','🦆',1],['mono','🐒',1],['cama','🛏️',1],['pez','🐟',1],['cubo','🪣',1],['hilo','🧵',1],['oso','🐻',0],['uva','🍇',0],['gato','🐱',1],['luna','🌙',1],['pera','🍐',1],['foca','🦭',1]];
+    const [w,e,i]=pick(W);const vow=w[i];const shown=w.slice(0,i)+'<b>_</b>'+w.slice(i+1);
+    return{q:'¿Qué vocal falta?',say:'Mira el dibujo. ¿Qué vocal falta en la palabra?',v:`<div class="big">${e}</div><div class="eq lword">${shown}</div>`,
+      o:['a','e','i','o','u'].map(x=>({label:`<span class="num">${x}</span>`,value:x})),cols:5,a:vow,h:`Es <b>${w}</b>: falta la <b>${vow}</b>.`}},
+  leMayMin(){const V5=['a','e','i','o','u'];const v=pick(V5);const up=Math.random()<.5;
+    return{q:up?`Toca la minúscula de <b>${v.toUpperCase()}</b>`:`Toca la mayúscula de <b>${v}</b>`,say:up?`Toca la ${v} minúscula`:`Toca la ${v} mayúscula`,
+      v:`<div class="eq" style="font-size:80px"><b>${up?v.toUpperCase():v}</b></div>`,
+      o:shuffle([v,...shuffle(V5.filter(x=>x!==v)).slice(0,2)]).map(x=>({label:`<span class="num">${up?x:x.toUpperCase()}</span>`,value:x})),
+      a:v,h:`${v.toUpperCase()} mayúscula y ${v} minúscula son la misma letra.`}},
+  leSilabas(){const W=[['pez','🐟',1],['sol','☀️',1],['pan','🍞',1],['tren','🚂',1],['flor','🌸',1],
+      ['gato','🐱',2],['pato','🦆',2],['mono','🐒',2],['cama','🛏️',2],['vaca','🐮',2],['casa','🏠',2],['luna','🌙',2],['pera','🍐',2],['oso','🐻',2],['uva','🍇',2],
+      ['pelota','⚽',3],['zapato','👟',3],['paloma','🕊️',3],['tomate','🍅',3],['conejo','🐰',3],['plátano','🍌',3],
+      ['mariposa','🦋',4],['elefante','🐘',4],['bicicleta','🚲',4],['cocodrilo','🐊',4]];
+    const [w,e,n]=pick(W);
+    return{q:`¿Cuántas sílabas tiene? Da palmadas 👏`,say:`${w}. Da una palmada por cada sílaba. ¿Cuántas sílabas tiene ${w}?`,v:`<div class="big">${e}</div><p class="lword">${w}</p>`,
+      o:[1,2,3,4].map(x=>({label:`<span class="num">${x}</span>`,value:x})),a:n,h:`${w}: ${n} ${n===1?'palmada':'palmadas'} → ${n} ${n===1?'sílaba':'sílabas'}.`}},
+
+  /* Unidad 2 · p, m, l · el / la */
+  leElLa(){const W=[['el','pato','🦆'],['la','luna','🌙'],['el','sol','☀️'],['la','casa','🏠'],['el','perro','🐶'],['la','vaca','🐮'],['el','gato','🐱'],
+      ['la','pelota','⚽'],['el','lápiz','✏️'],['la','flor','🌸'],['el','árbol','🌳'],['la','estrella','⭐'],['el','pez','🐟'],['la','oveja','🐑'],['el','oso','🐻'],
+      ['la','abeja','🐝'],['el','mapa','🗺️'],['la','lupa','🔍'],['el','puma','🐆'],['la','pila','🔋'],['el','pulpo','🐙'],['la','paloma','🕊️'],['el','pie','🦶'],
+      ['la','mamá','👩'],['el','papá','👨'],['la','miel','🍯'],['la','ola','🌊'],['el','mono','🐒'],['la','manzana','🍎'],['el','libro','📖']];
+    const [art,w,e]=pick(W);
+    if(Math.random()<.6)return{q:`¿<b>El</b> o <b>la</b>?`,say:`¿Se dice el ${w} o la ${w}?`,v:`<div class="big">${e}</div><div class="eq lword"><b>___</b> ${w}</div>`,
+      o:[['el','el'],['la','la']].map(x=>({label:`<span class="num">${x[0]}</span>`,value:x[1]})),a:art,h:`Se dice <b>${art} ${w}</b>.`};
+    const other=art==='el'?'la':'el';
+    return{q:'¿Cuál está bien?',say:'Mira el dibujo. ¿Cuál está bien escrito?',v:`<div class="big">${e}</div>`,
+      o:shuffle([[`${art} ${w}`,'ok'],[`${other} ${w}`,'x']]).map(x=>({label:x[0],value:x[1]})),a:'ok',h:`Se dice <b>${art} ${w}</b>.`}},
+  lePrimeraLetra(){const W=[['mapa','🗺️'],['mamá','👩'],['mono','🐒'],['moto','🏍️'],['mano','✋'],['manzana','🍎'],['mariposa','🦋'],['miel','🍯'],
+      ['papá','👨'],['puma','🐆'],['pila','🔋'],['pulpo','🐙'],['paloma','🕊️'],['pie','🦶'],['pato','🦆'],['perro','🐶'],['pez','🐟'],['pera','🍐'],['pan','🍞'],
+      ['lupa','🔍'],['luna','🌙'],['león','🦁'],['limón','🍋'],['libro','📖'],['lápiz','✏️'],['loro','🦜'],['lobo','🐺']];
+    const [w,e]=pick(W);const L0=w[0];
+    return{q:'¿Con qué letra empieza?',say:`${w}. ¿Con qué letra empieza ${w}?`,v:`<div class="big">${e}</div>`,
+      o:['m','p','l'].map(x=>({label:`<span class="num">${x.toUpperCase()} ${x}</span>`,value:x})),a:L0,h:`<b>${w}</b> empieza por <b>${L0}</b>: ${L0}… ${w}.`}},
+  leCompletaSil(){const W=[['mapa','🗺️',['ma','pa']],['puma','🐆',['pu','ma']],['pila','🔋',['pi','la']],['lupa','🔍',['lu','pa']],['pulpo','🐙',['pul','po'],1],
+      ['paloma','🕊️',['pa','lo','ma']],['mamá','👩',['ma','má'],0],['papá','👨',['pa','pá'],0],['pelo','💇',['pe','lo']],['palo','🪵',['pa','lo']],['mono','🐒',['mo','no'],0],
+      ['pato','🦆',['pa','to'],0],['luna','🌙',['lu','na'],0],['pera','🍐',['pe','ra'],0],['lima','🍋',['li','ma']],['amapola','🌺',['a','ma','po','la']]];
+    const it=pick(W);const [w,e,sy,fixed]=it;
+    const cand=sy.map((s,i)=>i).filter(i=>/^(m|p|l)[aeiou]$/.test(sy[i]));const i=fixed!=null?fixed:pick(cand);const ans=sy[i];
+    const fam=['ma','me','mi','mo','mu','pa','pe','pi','po','pu','la','le','li','lo','lu'];
+    const near=shuffle(fam.filter(s=>s!==ans&&(s[0]===ans[0]||s[1]===ans[1])));const opts=shuffle([ans,near[0],near[1]]);
+    const shown=sy.map((s,k)=>k===i?'<b>__</b>':s).join('');
+    return{q:'¿Qué sílaba falta?',say:'Mira el dibujo. ¿Qué sílaba falta?',v:`<div class="big">${e}</div><div class="eq lword">${shown}</div>`,
+      o:opts.map(x=>({label:`<span class="num">${x}</span>`,value:x})),a:ans,h:`Es <b>${sy.join('-')}</b>: falta <b>${ans}</b>.`}},
+  leLeePalabra(){const W=[['mapa','🗺️'],['mamá','👩'],['papá','👨'],['puma','🐆'],['pila','🔋'],['lupa','🔍'],['miel','🍯'],['ola','🌊'],
+      ['paloma','🕊️'],['pulpo','🐙'],['pie','🦶'],['amapola','🌺'],['palo','🪵'],['lima','🍋']];
+    const s=shuffle(W).slice(0,3);const [w,e]=s[0];
+    return{q:'Lee la palabra y toca su dibujo',say:'Lee la palabra tú solita y toca su dibujo.',v:`<div class="eq lword" style="font-size:56px">${w}</div>`,
+      o:shuffle(s).map(x=>({label:`<span class="emo">${x[1]}</span>`,value:x[0]})),a:w,h:`Pone <b>${w}</b> ${e}.`}},
+  leEligePalabra(){const G_=[[['mapa','🗺️'],['mamá','👩'],['papá','👨']],[['lupa','🔍'],['pila','🔋'],['puma','🐆']],[['pulpo','🐙'],['paloma','🕊️'],['palo','🪵']],
+      [['miel','🍯'],['mapa','🗺️'],['lima','🍋']],[['ola','🌊'],['pie','🦶'],['pila','🔋']],[['amapola','🌺'],['paloma','🕊️'],['pulpo','🐙']]];
+    const g=pick(G_);const [w,e]=pick(g);
+    return{q:'¿Qué palabra es?',say:'Mira el dibujo. ¿Qué palabra es? Léelas bien.',v:`<div class="big">${e}</div>`,
+      o:shuffle(g).map(x=>({label:`<span class="lword">${x[0]}</span>`,value:x[0]})),a:w,h:`Es <b>${w}</b> ${e}.`}},
+
   /* ---------- English: short questions; es = Spanish translation for the 🇪🇸 button.
      The word being practised stays in English inside es, so translating never gives the answer away. ---------- */
   colourName(){const {ans,set}=choose(V.colours);
@@ -540,7 +607,19 @@ const SUBJECTS=[
       {id:'retos',nm:'Retos',sb:'El enigma de las frutas',ico:'🍎',c:'#7a5cf0',gens:['enigmaDoble','enigmaSuma','falta','mismoResultado','daCinco']},
     ]},
   ]},
-  {id:'lengua',nm:'Lengua',ico:'📖',c:'#ef6aa6',temas:[]},
+  {id:'lengua',nm:'Lengua',ico:'📖',c:'#ef6aa6',temas:[
+    {id:'l-u1',nm:'Unidad 1',sb:'Las vocales y las sílabas',worlds:[
+      {id:'vocales',nm:'Las vocales',sb:'A, E, I, O, U',ico:'🅰️',c:'#e8483a',gens:['leVocalInicio','leVocalInicio','leMayMin']},
+      {id:'falta',nm:'¿Qué vocal falta?',sb:'p_to, m_no…',ico:'🔤',c:'#ffc83d',gens:['leVocalFalta']},
+      {id:'palmadas',nm:'Sílabas',sb:'Cuenta con palmadas',ico:'👏',c:'#34ad62',gens:['leSilabas']},
+    ]},
+    {id:'l-u2',nm:'Unidad 2',sb:'P, M, L · el y la',worlds:[
+      {id:'ella',nm:'¿El o la?',sb:'el pato, la luna…',ico:'👫',c:'#ef6aa6',gens:['leElLa']},
+      {id:'letras',nm:'M, P y L',sb:'¿Con qué letra empieza?',ico:'🔠',c:'#2f63d6',gens:['lePrimeraLetra']},
+      {id:'silabas',nm:'Sílabas',sb:'ma, pe, li, lo…',ico:'🧩',c:'#ffc83d',gens:['leCompletaSil']},
+      {id:'leer',nm:'Leo palabras',sb:'mapa, lupa, paloma…',ico:'📖',c:'#34ad62',gens:['leLeePalabra','leEligePalabra']},
+    ]},
+  ]},
   {id:'ingles',nm:'English',ico:'🇬🇧',c:'#e8483a',lang:'en',sources:[['all','All'],['academia','Academy'],['cole','School']],temas:[
     {id:'ia-hello',src:'academia',nm:'Hello!',sb:'Academy · October',worlds:[
       {id:'colours',nm:'Colours',sb:'Red, blue, green…',ico:'🎨',c:'#e8483a',gens:['colourName','touchColour']},
@@ -681,7 +760,7 @@ function renderQ(){
   cur=qs[qi];first=true;answered=false;renderDots();
   $('gtag').textContent=(ctx.label?ctx.label+'  ·  ':'')+cur.tag;
   $('qtext').innerHTML=cur.q;$('qes').hidden=true;$('qes').textContent=cur.es||'';$('tr').hidden=!cur.es;$('visual').innerHTML=cur.v;$('fb').innerHTML='';$('fb').className='feedback';$('next').hidden=true;
-  $('opts').style.gridTemplateColumns=cur.wide?'1fr':'';
+  $('opts').style.gridTemplateColumns=cur.wide?'1fr':cur.cols?`repeat(${cur.cols},minmax(0,1fr))`:'';
   $('opts').innerHTML=cur.o.map((o,i)=>`<button class="opt" type="button" data-i="${i}">${o.label}</button>`).join('');
   speak([[cur.say,cur.lang]]);
 }
