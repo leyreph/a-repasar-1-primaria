@@ -803,10 +803,14 @@ function finish(){
   if(ctx.kind==='fails'&&!failed.length){t=N?`¡Ya no te queda ninguna, ${N}!`:'¡Ya no te queda ninguna!';x='Has arreglado todas las falladas. 🎉'}
   $('endtitle').textContent=t;$('endtext').textContent=x;
   const k=roundFails.length;$('redo').hidden=!k;$('redo').textContent=k===1?U.redo1:U.redo(k);
-  $('again').textContent=ctx.kind==='fails'?(failed.length?`Seguir con falladas (${failed.length})`:U.again):U.again;$('leave').textContent=U.leave;
+  $('again').textContent=ctx.kind==='fails'?(failed.length?`Seguir con falladas (${failed.length})`:U.again):U.again;$('leave').textContent=leaveLabel(ctx.ui);
   $('again').hidden=ctx.kind==='fails'&&!failed.length;
   show('end');sWin();speak([[t+' '+x,ctx.ui]]);if(stars>=total*.75)confetti();
 }
+/* say exactly where "back" goes: the subject page or the home screen */
+function leaveLabel(lang){const toSubj=ctx&&ctx.from==='subject'&&curSubj;
+  if(lang==='en')return toSubj?`← Back to ${curSubj.nm}`:'🏠 Back to start';
+  return toSubj?`← Ir a ${curSubj.nm}`:'🏠 Ir al inicio';}
 function leave(){try{speechSynthesis.cancel()}catch(e){}stopArcade();
   if(ctx&&ctx.from==='subject'&&curSubj)renderSubject(curSubj.id);else renderHome();}
 
@@ -818,7 +822,7 @@ function playSubject(){const pairs=worldsOf(visibleTemas(curSubj).filter(temaHas
 function playAll(){const pairs=worldsOf(SUBJECTS.flatMap(s=>s.temas.filter(temaHasContent)));startGame({kind:'mix',pairs,n:MIX,from:'home',label:'Repaso de todo'});}
 function playFails(){if(!failed.length){showNoFails();return}startGame({kind:'fails',from:'home',label:'Fallados'});}
 function showNoFails(){$('endtitle').textContent='¡No tienes falladas!';$('endstars').textContent='🌟';
-  $('endtext').textContent='Cuando falles alguna pregunta, aparecerá aquí para repasarla.';$('redo').hidden=true;$('leave').textContent='Volver';$('again').hidden=true;ctx={from:'home'};show('end');
+  $('endtext').textContent='Cuando falles alguna pregunta, aparecerá aquí para repasarla.';$('redo').hidden=true;$('again').hidden=true;ctx={from:'home'};$('leave').textContent=leaveLabel('es');show('end');
   document.querySelector('[data-nav=fails]').setAttribute('aria-current','page');}
 
 /* ================= settings ================= */
@@ -928,7 +932,7 @@ function finishArcade(st,total,kind){stopArcade();
   if(st>=total){t=U.e1(N);x=kind==='say'?'You said everything! 🗣️':'You won the game! 🎮'}
   else if(st>=total*.6){t=U.e2(N);x=U.x2(st,total)}else{t=U.e3;x="Let's play again!"}
   $('endtitle').textContent=t;$('endtext').textContent=x;$('redo').hidden=true;$('again').hidden=false;
-  $('again').textContent=kind==='say'?'🗣️ Say more':'🎲 Another game';$('leave').textContent=U.leave;
+  $('again').textContent=kind==='say'?'🗣️ Say more':'🎲 Another game';$('leave').textContent=leaveLabel('en');
   show('end');sWin();speak([[t,'en']]);if(st>=total*.6)confetti();}
 
 /* ---------- 1 · Hangman with balloons ---------- */
