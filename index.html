@@ -672,13 +672,14 @@ $('fform').addEventListener('submit',async e=>{e.preventDefault();
   if($('fbot').checked)return; // bots tick hidden boxes
   $('fsend').disabled=true;$('fstatus').style.color='var(--muted)';$('fstatus').textContent='Enviando…';
   const body={access_key:W3F_KEY,subject:'¡A repasar! · Sugerencias o errores',from_name:$('ffrom').value.trim()||'Anónimo',
-    message:msg,contacto:$('ffrom').value.trim()||'—',perfil:NAME()||'—',pantalla:screen,navegador:navigator.userAgent,botcheck:false};
+    message:msg,contacto:$('ffrom').value.trim()||'—',perfil:NAME()||'—',pantalla:screen,navegador:navigator.userAgent};
   try{const res=await fetch('https://api.web3forms.com/submit',{method:'POST',headers:{'Content-Type':'application/json',Accept:'application/json'},body:JSON.stringify(body)});
     const j=await res.json().catch(()=>({}));
     if(res.ok&&j.success!==false){$('fstatus').style.color='var(--leaf)';$('fstatus').textContent='¡Enviado! Muchas gracias 💛';$('fmsg').value='';$('ffrom').value='';setTimeout(()=>{$('feedback').hidden=true},1800);}
-    else throw new Error(j.message||res.status);
+    else throw new Error('Respuesta del servidor ('+res.status+'): '+(j.message||'sin detalle'));
   }catch(err){$('fsend').disabled=false;$('fstatus').style.color='var(--red)';
-    $('fstatus').innerHTML=location.hostname.endsWith('github.io')?'No se ha podido enviar. Revisa la conexión y prueba otra vez.'
+    const why=String(err&&err.message||err).replace(/</g,'&lt;');
+    $('fstatus').innerHTML=location.hostname.endsWith('github.io')?'No se ha podido enviar.<br><small style="font:400 14px var(--body);color:var(--muted)">Detalle: '+why+'</small>'
       :`Desde aquí no se puede enviar. Ábrelo en <a href="${PUBLIC_URL}">${PUBLIC_URL.replace('https://','')}</a>`;}
 });
 
