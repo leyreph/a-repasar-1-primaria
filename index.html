@@ -649,7 +649,7 @@ function showNoFails(){$('endtitle').textContent='¡No tienes falladas!';$('ends
   document.querySelector('[data-nav=fails]').setAttribute('aria-current','page');}
 
 /* ================= settings ================= */
-function openSettings(){$('sname').value=cfg.name;$('tvoice').setAttribute('aria-checked',cfg.voice);$('tsound').setAttribute('aria-checked',cfg.sound);$('settings').hidden=false;$('sname').focus();}
+function openSettings(){$('sname').value=cfg.name;$('tvoice').setAttribute('aria-checked',cfg.voice);$('tsound').setAttribute('aria-checked',cfg.sound);$('settings').hidden=false;}
 ['tvoice','tsound'].forEach(id=>$(id).addEventListener('click',e=>{const b=e.currentTarget;b.setAttribute('aria-checked',b.getAttribute('aria-checked')!=='true')}));
 $('sform').addEventListener('submit',e=>{e.preventDefault();
   cfg.name=$('sname').value.trim();cfg.voice=$('tvoice').getAttribute('aria-checked')==='true';cfg.sound=$('tsound').getAttribute('aria-checked')==='true';
