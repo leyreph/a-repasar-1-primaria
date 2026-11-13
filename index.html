@@ -794,14 +794,24 @@ function renderSubject(id){
 }
 
 /* build a round from a list of {t,w} pairs: picks worlds evenly, then a generator */
-function buildRound(pairs,n){const out=[];const seen=new Set();let guard=0;
+/* weighted random pick */
+function wpick(list,wf){const ws=list.map(wf);let x=Math.random()*ws.reduce((a,b)=>a+b,0);for(let i=0;i<list.length;i++){x-=ws[i];if(x<=0)return list[i]}return list[list.length-1]}
+/* smart review: newest unit ≈60%, the one before ≈25%, older ones share the rest;
+   inside that, games she gets wrong more often come up more (up to x3), unplayed ones a bit more */
+function smartWeight(p){const subj=SUBJECTS.find(s=>s.temas.includes(p.t));if(!subj)return 1;
+  const ts=subj.temas.filter(t=>t.worlds&&t.worlds.length);const age=ts.length-1-ts.indexOf(p.t);
+  const older=Math.max(1,ts.length-2);const temaW=age===0?(ts.length===1?1:.6):age===1?(ts.length===2?.4:.25):.15/older;
+  const e=stats.w[statKey([subj.nm,p.t.nm,p.w.nm])];const acc=e&&e.n>=3?e.ok/e.n:null;
+  const weak=acc==null?1.5:1+2*(1-acc);
+  return temaW/p.t.worlds.length*weak;}
+function buildRound(pairs,n,smart){const out=[];const seen=new Set();let guard=0;
   /* balance by subject first, so a big subject doesn't swallow the mix */
   const subjOf=t=>SUBJECTS.find(s=>s.temas.includes(t))||t.subj;
   const bySubj={};pairs.forEach(p=>{const s=subjOf(p.t);(bySubj[s.id]=bySubj[s.id]||[]).push(p)});
   let bag=[];
   while(out.length<n&&guard<n*20){guard++;
     if(!bag.length)bag=shuffle(Object.keys(bySubj));
-    const {t,w}=pick(bySubj[bag.pop()]);const subj=subjOf(t);
+    const list=bySubj[bag.pop()];const {t,w}=smart?wpick(list,smartWeight):pick(list);const subj=subjOf(t);
     const g=pick(w.gens);const q=G[g]();q.lang=q.lang||'es';
     const key=g+'|'+q.q+'|'+q.v+'|'+q.a;if(seen.has(key))continue;seen.add(key);
     q.key=key;q.tag=`${subj.ico} ${subj.nm} · ${w.nm}`;q.stat=[subj.nm,t.nm,w.nm];out.push(q);}
@@ -810,7 +820,7 @@ function buildRound(pairs,n){const out=[];const seen=new Set();let guard=0;
 function startGame(c){ctx=c;roundFails=[];
   qs=c.kind==='fails'?shuffle(failed).slice(0,FAILMAX).map(q=>Object.assign({},q,{o:shuffle(q.o),res:null}))
     :c.kind==='redo'?c.list.map(q=>Object.assign({},q,{o:shuffle(q.o),res:null}))
-    :buildRound(c.pairs,c.n||ROUND);
+    :buildRound(c.pairs,c.n||ROUND,c.smart);
   if(!qs.length)return;
   if(!ctx.lang)ctx.ui=qs.every(q=>q.lang==='en')?'en':'es';else ctx.ui=ctx.lang;
   $('back').textContent=L(ctx.ui).back;
@@ -874,11 +884,11 @@ function leave(){try{speechSynthesis.cancel()}catch(e){}stopArcade();
 function playWorld(tid,wid){const t=curSubj.temas.find(x=>x.id===tid);
   const pairs=wid==='*'?t.worlds.map(w=>({t,w})):[{t,w:t.worlds.find(x=>x.id===wid)}];
   startGame({kind:'world',pairs,bestKey:t.id+'/'+wid,from:'subject',label:'',lang:curSubj.lang});}
-function playSubject(){const pairs=worldsOf(visibleTemas(curSubj).filter(temaHasContent));if(pairs.length)startGame({kind:'mix',pairs,n:MIX,from:'subject',label:curSubj.lang==='en'?'Review':'Repaso',lang:curSubj.lang});}
+function playSubject(){const pairs=worldsOf(visibleTemas(curSubj).filter(temaHasContent));if(pairs.length)startGame({kind:'mix',smart:true,pairs,n:MIX,from:'subject',label:curSubj.lang==='en'?'Review':'Repaso',lang:curSubj.lang});}
 const OPS_WORLD={id:'ops',nm:'Sumas y restas',sb:'Operaciones',ico:'➕',c:'#2f63d6',gens:['opSuma','opResta','opSuma','opResta','sumaColumna','restaColumna','falta']};
 function playOps(){const subj=SUBJECTS.find(s=>s.id==='mates');const t={id:'m-ops',nm:'Operaciones',worlds:[OPS_WORLD],subj};
   startGame({kind:'world',pairs:[{t,w:OPS_WORLD}],n:MIX,bestKey:'m-ops/*',from:'subject',label:'',lang:'es'});}
-function playAll(){const pairs=worldsOf(SUBJECTS.flatMap(s=>s.temas.filter(temaHasContent)));startGame({kind:'mix',pairs,n:MIX,from:'home',label:'Repaso de todo'});}
+function playAll(){const pairs=worldsOf(SUBJECTS.flatMap(s=>s.temas.filter(temaHasContent)));startGame({kind:'mix',smart:true,pairs,n:MIX,from:'home',label:'Repaso de todo'});}
 function playFails(){if(!failed.length){showNoFails();return}startGame({kind:'fails',from:'home',label:'Fallados'});}
 function showNoFails(){$('endtitle').textContent='¡No tienes falladas!';$('endstars').textContent='🌟';
   $('endtext').textContent='Cuando falles alguna pregunta, aparecerá aquí para repasarla.';$('redo').hidden=true;$('again').hidden=true;ctx={from:'home'};$('leave').textContent=leaveLabel('es');$('newsticker').hidden=true;show('end');
