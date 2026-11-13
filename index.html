@@ -195,7 +195,7 @@ h2.sec small{font:500 15px var(--body);color:var(--muted)}
       <button class="gear" id="gear2" type="button" aria-label="Ajustes">⚙️</button>
     </header>
     <div class="chips" id="chips" hidden></div>
-    <button class="bigbtn sticker" id="subjAll" type="button"><span aria-hidden="true">🏆</span><div><div id="subjAllT"></div><small>Un poco de cada tema</small></div></button>
+    <button class="bigbtn sticker" id="subjAll" type="button"><span aria-hidden="true">🏆</span><div><div id="subjAllT"></div><small id="subjAllS"></small></div></button>
     <div id="temas"></div>
   </section>
 
@@ -376,56 +376,56 @@ const G={
   daCinco(){const t=R(3,9),ra=R(0,t),right=`${ra} + ${t-ra}`;const w=new Set();while(w.size<2){const x=R(0,8),y=R(0,10-x);if(x+y!==t)w.add(`${x} + ${y}`)}
     return{q:`¿Qué operación da ${t}?`,say:`¿Qué operación da ${t}?`,v:`<div class="eq"><b>${t}</b></div>`,o:shuffle([[right,'ok'],...[...w].map(s=>[s,s])]).map(x=>({label:x[0],value:x[1]})),a:'ok',h:`${right} = ${t}.`}},
 
-  /* ---------- Inglés · colours ---------- */
+  /* ---------- English · colours (all hints in English) ---------- */
   colourName(){const {ans,set}=choose(V.colours);
-    return E('What colour is it?','What colour is it?',`<div class="blob" style="background:${ans[1]}"></div>`,set.map(c=>({label:c[0],value:c[0]})),ans[0],`Es <b>${ans[0]}</b>: ${ans[2]}.`)},
+    return E('What colour is it?','What colour is it?',`<div class="blob" style="background:${ans[1]}"></div>`,set.map(c=>({label:c[0],value:c[0]})),ans[0],`It's <b>${ans[0]}</b>!`)},
   touchColour(){const {ans,set}=choose(V.colours,4);
-    return E(`Touch <em>${ans[0].toUpperCase()}</em>.`,`Touch ${ans[0]}.`,'',set.map(c=>({label:`<span class="sw" style="background:${c[1]}"></span>`,value:c[0]})),ans[0],`${ans[0][0].toUpperCase()+ans[0].slice(1)} es ${ans[2]}.`)},
+    return E(`Touch <em>${ans[0].toUpperCase()}</em>.`,`Touch ${ans[0]}.`,'',set.map(c=>({label:`<span class="sw" style="background:${c[1]}"></span>`,value:c[0]})),ans[0],`This is <b>${ans[0]}</b>: <span class="sw" style="display:inline-block;width:22px;height:22px;vertical-align:middle;border-radius:50%;border:2px solid #1d2b5a;background:${ans[1]}"></span>`)},
   /* ---------- numbers ---------- */
   countStars(){const n=R(1,10),e=pick(['⭐','🕯️','🎈','🍎']),nm={'⭐':'stars','🕯️':'candles','🎈':'balloons','🍎':'apples'}[e];
-    return E(`How many ${nm}?`,`How many ${nm}?`,items(e,n),numOpts(n,1,10).map(o=>o),n,`Cuenta en inglés: ${V.numbers.slice(1,n+1).join(', ')}. ¡${n}!`)},
+    return E(`How many ${nm}?`,`How many ${nm}?`,items(e,n),numOpts(n,1,10),n,`Let's count: ${V.numbers.slice(1,n+1).join(', ')}. <b>${V.numbers[n]}</b>!`)},
   numberWord(){const n=R(1,10);const s=new Set([n]);while(s.size<3)s.add(R(1,10));
-    return E('Which word is this number?',`Which word is this number?`,`<div class="eq" style="font-size:90px"><b>${n}</b></div>`,shuffle([...s]).map(k=>({label:V.numbers[k],value:k})),n,`${n} en inglés es <b>${V.numbers[n]}</b>.`)},
+    return E('Which word is this number?','Which word is this number?',`<div class="eq" style="font-size:90px"><b>${n}</b></div>`,shuffle([...s]).map(k=>({label:V.numbers[k],value:k})),n,`${n} is <b>${V.numbers[n]}</b>.`)},
   wordNumber(){const n=R(1,10);const s=new Set([n]);while(s.size<3)s.add(R(1,10));
-    return E(`Touch number <em>${V.numbers[n].toUpperCase()}</em>.`,`Touch number ${V.numbers[n]}.`,'',shuffle([...s]).map(k=>({label:`<span class="num">${k}</span>`,value:k})),n,`${V.numbers[n]} es el ${n}.`)},
+    return E(`Touch number <em>${V.numbers[n].toUpperCase()}</em>.`,`Touch number ${V.numbers[n]}.`,'',shuffle([...s]).map(k=>({label:`<span class="num">${k}</span>`,value:k})),n,`${V.numbers[n][0].toUpperCase()+V.numbers[n].slice(1)} is <b>${n}</b>.`)},
   howOld(){const n=R(3,9);
-    return E('How old is the bear? Count the candles!','How old is the bear? Count the candles!',`<div class="row">${bigv('🐻')}${items('🕯️',n)}</div>`,numOpts(n,1,10),n,`Tiene ${n} velas: "I am ${V.numbers[n]}".`)},
+    return E('How old is the bear? Count the candles!','How old is the bear? Count the candles!',`<div class="row">${bigv('🐻')}${items('🕯️',n)}</div>`,numOpts(n,1,10),n,`${n} candles: "I am <b>${V.numbers[n]}</b>!"`)},
   /* ---------- zoo ---------- */
   whatAnimal(){const {ans,set}=choose(V.zoo);
-    return E('What animal is it?','What animal is it?',bigv(ans[1]),set.map(a=>({label:a[0],value:a[0]})),ans[0],`${ans[1]} es <b>${ans[0]}</b>: ${ans[2]}.`)},
+    return E('What animal is it?','What animal is it?',bigv(ans[1]),set.map(a=>({label:a[0],value:a[0]})),ans[0],`It's a <b>${ans[0]}</b> ${ans[1]}.`)},
   touchAnimal(){const {ans,set}=choose(V.zoo,4);
-    return E(`Touch the <em>${ans[0].toUpperCase()}</em>.`,`Touch the ${ans[0]}.`,'',set.map(a=>({label:emo(a[1]),value:a[0]})),ans[0],`${ans[0][0].toUpperCase()+ans[0].slice(1)} es ${ans[2]} ${ans[1]}.`)},
+    return E(`Touch the <em>${ans[0].toUpperCase()}</em>.`,`Touch the ${ans[0]}.`,'',set.map(a=>({label:emo(a[1]),value:a[0]})),ans[0],`This is the <b>${ans[0]}</b> ${ans[1]}.`)},
   bigSmall(){const a=pick(V.zoo),big=Math.random()<.5;const o=shuffle([['big',100],['small',40]]);
-    return E(`Touch the <em>${big?'BIG':'SMALL'}</em> ${a[0]}.`,`Touch the ${big?'big':'small'} ${a[0]}.`,'',o.map(x=>({label:`<span style="font-size:${x[1]}px;line-height:1">${a[1]}</span>`,value:x[0]})),big?'big':'small',big?'Big es grande.':'Small es pequeño.')},
+    return E(`Touch the <em>${big?'BIG':'SMALL'}</em> ${a[0]}.`,`Touch the ${big?'big':'small'} ${a[0]}.`,'',o.map(x=>({label:`<span style="font-size:${x[1]}px;line-height:1">${a[1]}</span>`,value:x[0]})),big?'big':'small',big?`<b>Big</b> ${a[1]} — <span style="font-size:14px">small</span> ${a[1]}`:`<b>Small</b> ${a[1]} — big ${a[1]}`)},
   /* ---------- days & months ---------- */
   dayAfter(){const i=R(0,5),ans=V.days[i+1];const s=new Set([ans]);while(s.size<3)s.add(pick(V.days.filter(d=>d!==V.days[i])));
-    return E(`What day comes after <em>${V.days[i]}</em>?`,`What day comes after ${V.days[i]}?`,'',shuffle([...s]).map(d=>({label:d,value:d})),ans,`Después del ${V.daysEs[i]} va el ${V.daysEs[i+1]}: <b>${ans}</b>.`)},
+    return E(`What day comes after <em>${V.days[i]}</em>?`,`What day comes after ${V.days[i]}?`,'',shuffle([...s]).map(d=>({label:d,value:d})),ans,`${V.days[i]} → <b>${ans}</b>`)},
   isDay(){const d=pick(V.days);const o=[[d,'ok'],[pick(V.colours)[0],'x1'],[pick(V.zoo)[0],'x2']];
-    return E('Which one is a day of the week?','Which one is a day of the week?',bigv('📅'),txtOpts(o),'ok',`${d} es ${V.daysEs[V.days.indexOf(d)]}.`)},
+    return E('Which one is a day of the week?','Which one is a day of the week?',bigv('📅'),txtOpts(o),'ok',`<b>${d}</b> is a day. Monday, Tuesday, Wednesday…`)},
   isMonth(){const m=pick(V.months);const o=[[m,'ok'],[pick(V.days),'x1'],[pick(V.colours)[0],'x2']];
-    return E('Which one is a month?','Which one is a month?',bigv('🗓️'),txtOpts(o),'ok',`${m} es ${V.monthsEs[V.months.indexOf(m)]}.`)},
+    return E('Which one is a month?','Which one is a month?',bigv('🗓️'),txtOpts(o),'ok',`<b>${m}</b> is a month. January, February, March…`)},
   monthAfter(){const i=R(0,5),ans=V.months[i+1];const s=new Set([ans]);while(s.size<3)s.add(V.months[R(0,7)]);s.delete(V.months[i]);while(s.size<3)s.add(V.months[R(8,11)]);
-    return E(`What month comes after <em>${V.months[i]}</em>?`,`What month comes after ${V.months[i]}?`,'',shuffle([...s]).map(d=>({label:d,value:d})),ans,`Después de ${V.monthsEs[i]} va ${V.monthsEs[i+1]}: <b>${ans}</b>.`)},
+    return E(`What month comes after <em>${V.months[i]}</em>?`,`What month comes after ${V.months[i]}?`,'',shuffle([...s]).map(d=>({label:d,value:d})),ans,`${V.months[i]} → <b>${ans}</b>`)},
   /* ---------- actions ---------- */
   teacherSays(){const {ans,set}=choose(V.actions);
-    return E(`Teacher says: <em>${ans[0].toUpperCase()}!</em>`,`Teacher says: ${ans[0]}!`,'',set.map(a=>({label:emo(a[1]),value:a[0]})),ans[0],`${ans[0][0].toUpperCase()+ans[0].slice(1)} es ${ans[2]} ${ans[1]}.`)},
+    return E(`Teacher says: <em>${ans[0].toUpperCase()}!</em>`,`Teacher says: ${ans[0]}!`,'',set.map(a=>({label:emo(a[1]),value:a[0]})),ans[0],`<b>${ans[0][0].toUpperCase()+ans[0].slice(1)}</b> ${ans[1]}`)},
   direction(){const {ans,set}=choose(V.dirs,4);
-    return E(`Go <em>${ans[0].toUpperCase()}</em>!`,`Go ${ans[0]}!`,'',set.map(a=>({label:emo(a[1]),value:a[0]})),ans[0],`${ans[0][0].toUpperCase()+ans[0].slice(1)} es ${ans[2]} ${ans[1]}.`)},
+    return E(`Go <em>${ans[0].toUpperCase()}</em>!`,`Go ${ans[0]}!`,'',set.map(a=>({label:emo(a[1]),value:a[0]})),ans[0],`<b>${ans[0][0].toUpperCase()+ans[0].slice(1)}</b> ${ans[1]}`)},
   /* ---------- Halloween ---------- */
   hallWord(){const {ans,set}=choose(V.halloween);
-    return E('Who is it?','Who is it?',bigv(ans[1]),set.map(a=>({label:a[0],value:a[0]})),ans[0],`${ans[1]} es <b>${ans[0]}</b>: ${ans[2]}.`)},
+    return E('Who is it?','Who is it?',bigv(ans[1]),set.map(a=>({label:a[0],value:a[0]})),ans[0],`It's a <b>${ans[0]}</b> ${ans[1]}.`)},
   hallTouch(){const {ans,set}=choose(V.halloween,4);
-    return E(`Touch the <em>${ans[0].toUpperCase()}</em>.`,`Touch the ${ans[0]}.`,'',set.map(a=>({label:emo(a[1]),value:a[0]})),ans[0],`${ans[0][0].toUpperCase()+ans[0].slice(1)} es ${ans[2]} ${ans[1]}.`)},
+    return E(`Touch the <em>${ans[0].toUpperCase()}</em>.`,`Touch the ${ans[0]}.`,'',set.map(a=>({label:emo(a[1]),value:a[0]})),ans[0],`This is the <b>${ans[0]}</b> ${ans[1]}.`)},
   hallMove(){const {ans,set}=choose(V.moves);
-    if(Math.random()<.5)return E(`<em>${ans[0].toUpperCase()}</em> like a…`,`${ans[0]} like a…`,'',set.map(m=>({label:emo(m[2]),value:m[1]})),ans[1],`${ans[0]} like a ${ans[1]}: ${ans[3]} como ${ans[2]}.`);
-    return E(`How does the ${ans[1]} move?`,`How does the ${ans[1]} move?`,bigv(ans[2]),set.map(m=>({label:m[0],value:m[0]})),ans[0],`The ${ans[1]} can <b>${ans[0]}</b>: ${ans[3]}.`)},
+    if(Math.random()<.5)return E(`<em>${ans[0].toUpperCase()}</em> like a…`,`${ans[0]} like a…`,'',set.map(m=>({label:emo(m[2]),value:m[1]})),ans[1],`${ans[0][0].toUpperCase()+ans[0].slice(1)} like a <b>${ans[1]}</b> ${ans[2]}`);
+    return E(`How does the ${ans[1]} move?`,`How does the ${ans[1]} move?`,bigv(ans[2]),set.map(m=>({label:m[0],value:m[0]})),ans[0],`The ${ans[1]} can <b>${ans[0]}</b>.`)},
   bodyTouch(){const {ans,set}=choose(V.body,4);
-    return E(`My monster has big <em>${ans[0].toUpperCase()}</em>. Touch the ${ans[0]}!`,`My monster has big ${ans[0]}. Touch the ${ans[0]}!`,bigv('👹'),set.map(b=>({label:emo(b[1]),value:b[0]})),ans[0],`${ans[0][0].toUpperCase()+ans[0].slice(1)} son ${ans[2]} ${ans[1]}.`)},
+    return E(`My monster has big <em>${ans[0].toUpperCase()}</em>. Touch the ${ans[0]}!`,`My monster has big ${ans[0]}. Touch the ${ans[0]}!`,bigv('👹'),set.map(b=>({label:emo(b[1]),value:b[0]})),ans[0],`These are the <b>${ans[0]}</b> ${ans[1]}.`)},
   /* ---------- emotions ---------- */
   emoWord(){const {ans,set}=choose(V.emotions);
-    return E('How do I feel?','How do I feel?',bigv(ans[1]),set.map(a=>({label:a[0],value:a[0]})),ans[0],`${ans[1]} es <b>${ans[0]}</b>: ${ans[2]}.`)},
+    return E('How do I feel?','How do I feel?',bigv(ans[1]),set.map(a=>({label:a[0],value:a[0]})),ans[0],`I feel <b>${ans[0]}</b> ${ans[1]}.`)},
   emoTouch(){const {ans,set}=choose(V.emotions,4);
-    return E(`Find the <em>${ans[0].toUpperCase()}</em> face.`,`Find the ${ans[0]} face.`,'',set.map(a=>({label:emo(a[1]),value:a[0]})),ans[0],`${ans[0][0].toUpperCase()+ans[0].slice(1)} es ${ans[2]} ${ans[1]}.`)},
+    return E(`Find the <em>${ans[0].toUpperCase()}</em> face.`,`Find the ${ans[0]} face.`,'',set.map(a=>({label:emo(a[1]),value:a[0]})),ans[0],`This face is <b>${ans[0]}</b> ${ans[1]}.`)},
 };
 
 /* ================= CONTENT: subjects → temas → mundos =================
@@ -441,28 +441,45 @@ const SUBJECTS=[
     ]},
   ]},
   {id:'lengua',nm:'Lengua',ico:'📖',c:'#ef6aa6',temas:[]},
-  {id:'ingles',nm:'Inglés',ico:'🇬🇧',c:'#e8483a',sources:[['all','Todo'],['academia','Academia'],['cole','Cole']],temas:[
-    {id:'ia-hello',src:'academia',nm:'Hello!',sb:'Academia · octubre',worlds:[
-      {id:'colours',nm:'Colours',sb:'Los colores',ico:'🎨',c:'#e8483a',gens:['colourName','touchColour']},
-      {id:'numbers',nm:'Numbers',sb:'Del 1 al 10',ico:'🔟',c:'#ffc83d',gens:['countStars','numberWord','wordNumber','howOld']},
-      {id:'zoo',nm:'Zoo animals',sb:'Animales y big / small',ico:'🦁',c:'#34ad62',gens:['whatAnimal','touchAnimal','touchAnimal','bigSmall']},
-      {id:'days',nm:'Days & months',sb:'Días y meses',ico:'📅',c:'#2f63d6',gens:['dayAfter','isDay','isMonth','monthAfter']},
-      {id:'actions',nm:'Teacher says!',sb:'Acciones y direcciones',ico:'🦘',c:'#7a5cf0',gens:['teacherSays','direction']},
+  {id:'ingles',nm:'English',ico:'🇬🇧',c:'#e8483a',lang:'en',sources:[['all','All'],['academia','Academy'],['cole','School']],temas:[
+    {id:'ia-hello',src:'academia',nm:'Hello!',sb:'Academy · October',worlds:[
+      {id:'colours',nm:'Colours',sb:'Red, blue, green…',ico:'🎨',c:'#e8483a',gens:['colourName','touchColour']},
+      {id:'numbers',nm:'Numbers',sb:'One to ten',ico:'🔟',c:'#ffc83d',gens:['countStars','numberWord','wordNumber','howOld']},
+      {id:'zoo',nm:'Zoo animals',sb:'Animals, big & small',ico:'🦁',c:'#34ad62',gens:['whatAnimal','touchAnimal','touchAnimal','bigSmall']},
+      {id:'days',nm:'Days & months',sb:'Monday, January…',ico:'📅',c:'#2f63d6',gens:['dayAfter','isDay','isMonth','monthAfter']},
+      {id:'actions',nm:'Teacher says!',sb:'Jump, run, left, right',ico:'🦘',c:'#7a5cf0',gens:['teacherSays','direction']},
     ]},
-    {id:'ia-halloween',src:'academia',nm:'Halloween',sb:'Academia · finales de octubre',worlds:[
-      {id:'monsters',nm:'Monsters',sb:'Personajes de Halloween',ico:'👻',c:'#f08a3a',gens:['hallWord','hallTouch']},
+    {id:'ia-halloween',src:'academia',nm:'Halloween',sb:'Academy · end of October',worlds:[
+      {id:'monsters',nm:'Monsters',sb:'Ghost, bat, spider…',ico:'👻',c:'#f08a3a',gens:['hallWord','hallTouch']},
       {id:'moves',nm:'Move like…',sb:'Stomp, crawl, float…',ico:'🕷️',c:'#7a5cf0',gens:['hallMove']},
-      {id:'body',nm:'My monster',sb:'Partes del cuerpo',ico:'👹',c:'#34ad62',gens:['bodyTouch']},
+      {id:'body',nm:'My monster',sb:'Eyes, nose, mouth…',ico:'👹',c:'#34ad62',gens:['bodyTouch']},
     ]},
-    {id:'ia-feelings',src:'academia',nm:'Feelings',sb:'Academia · noviembre',worlds:[
+    {id:'ia-feelings',src:'academia',nm:'Feelings',sb:'Academy · November',worlds:[
       {id:'emotions',nm:'Emotions',sb:'Happy, sad, silly…',ico:'😀',c:'#ffc83d',gens:['emoWord','emoTouch','emoTouch']},
       {id:'lava',nm:'The Floor Is Lava',sb:'Jump, up, down…',ico:'🌋',c:'#e8483a',gens:['teacherSays','direction','direction']},
-      {id:'colours2',nm:'Colours',sb:'Repaso de colores',ico:'🖍️',c:'#2f63d6',gens:['colourName','touchColour']},
+      {id:'colours2',nm:'Colours',sb:'Colours again!',ico:'🖍️',c:'#2f63d6',gens:['colourName','touchColour']},
     ]},
   ]},
   {id:'natu',nm:'Natu',ico:'🌱',c:'#34ad62',temas:[]},
   {id:'sociales',nm:'Sociales',ico:'🌍',c:'#f08a3a',temas:[]},
 ];
+
+/* ================= UI text (Spanish / English) ================= */
+const T={
+  es:{temas:n=>n+(n===1?' tema':' temas'),none:'Aún sin juegos',soon:'Pronto',allSubj:n=>'Repaso de todo '+n,allSubjSb:'Un poco de cada tema',
+      allTema:'Todo el tema',allTemaSb:t=>t+': de todo',of:'de',empty:'Todavía no hay juegos aquí. ¡Pronto habrá!',emptyCole:'Todavía no hay temas del cole. ¡Pronto habrá!',
+      back:'← Salir',next:'Siguiente →',last:'Ver mis estrellas →',oops:'¡Casi! Prueba otra vez.',grade:'1.º de Primaria',
+      e1:n=>n?`¡Lo has bordado, ${n}!`:'¡Lo has bordado!',x1:'Todas a la primera. ¡Eres un crack!',e2:n=>n?`¡Muy bien, ${n}!`:'¡Muy bien!',x2:(s,t)=>`Has conseguido ${s} estrellas de ${t}.`,
+      e3:'¡Bien hecho!',x3:s=>`${s} estrellas. ¡Vamos a repasar las que fallaste!`,e4:'¡Sigue practicando!',x4:'Cada vez te saldrá mejor. Repite las falladas y verás.',
+      redo1:'🔁 Repetir la fallada',redo:k=>`🔁 Repetir las ${k} falladas`,again:'Jugar otra vez',leave:'Volver'},
+  en:{temas:n=>n+(n===1?' unit':' units'),none:'Coming soon',soon:'Soon',allSubj:n=>'Review all '+n,allSubjSb:'A bit of every unit',
+      allTema:'Whole unit',allTemaSb:t=>t+': everything',of:'of',empty:'No games here yet. Coming soon!',emptyCole:'No school units yet. Coming soon!',
+      back:'← Exit',next:'Next →',last:'See my stars →',oops:'Oops! Try again.',grade:'Year 1',
+      e1:n=>n?`Perfect, ${n}!`:'Perfect!',x1:'All right the first time. You are a star!',e2:n=>n?`Very good, ${n}!`:'Very good!',x2:(s,t)=>`You got ${s} stars out of ${t}.`,
+      e3:'Well done!',x3:s=>`${s} stars. Let's practise the ones you missed!`,e4:'Keep practising!',x4:"You'll get better every time. Try the ones you missed.",
+      redo1:'🔁 Try the missed one',redo:k=>`🔁 Try the ${k} missed ones`,again:'Play again',leave:'Back'}
+};
+const L=lang=>T[lang]||T.es;
 
 /* ================= sound & voice ================= */
 let ac=null;
@@ -499,26 +516,26 @@ function renderHome(){
   $('hello').textContent=NAME()?`¡Hola, ${NAME()}!`:'¡Hola!';
   $('subjects').innerHTML=SUBJECTS.map(s=>{const n=s.temas.filter(temaHasContent).length;
     return `<button class="card sticker${n?'':' soon'}" type="button" data-s="${s.id}" style="--c:${s.c}">
-      ${n?'':'<span class="pill">Pronto</span>'}
+      ${n?'':'<span class="pill">'+L(s.lang).soon+'</span>'}
       <span class="ico" aria-hidden="true">${s.ico}</span><span class="nm">${s.nm}</span>
-      <span class="sb">${n?n+(n===1?' tema':' temas'):'Aún sin juegos'}</span></button>`}).join('');
+      <span class="sb">${n?L(s.lang).temas(n):L(s.lang).none}</span></button>`}).join('');
   show('home');
 }
 let curSubj=null;
 function renderSubject(id){
-  const s=SUBJECTS.find(x=>x.id===id);curSubj=s;
+  const s=SUBJECTS.find(x=>x.id===id);curSubj=s;const t_=L(s.lang);
   $('sbadge').textContent=s.ico;$('sbadge').style.setProperty('--c',s.c);
-  $('seyebrow').textContent=NAME()?`${NAME()} · 1.º de Primaria`:'1.º de Primaria';$('stitle').textContent=s.nm;
+  $('seyebrow').textContent=NAME()?`${NAME()} · ${t_.grade}`:t_.grade;$('stitle').textContent=s.nm;
   if(s.sources){$('chips').hidden=false;
     $('chips').innerHTML=s.sources.map(([k,l])=>`<button class="chip" type="button" data-src="${k}" aria-pressed="${cfg.src===k}">${l}</button>`).join('');
   }else $('chips').hidden=true;
   const temas=visibleTemas(s).filter(temaHasContent);
   $('subjAll').hidden=!temas.length;
   const srcName=s.sources&&cfg.src!=='all'?' ('+s.sources.find(x=>x[0]===cfg.src)[1]+')':'';
-  $('subjAllT').textContent=`Repaso de todo ${s.nm}${srcName}`;
+  $('subjAllT').textContent=t_.allSubj(s.nm)+srcName;$('subjAllS').textContent=t_.allSubjSb;
   let h='';
   if(!temas.length){
-    const msg=s.sources&&cfg.src==='cole'?'Todavía no hay temas del cole. ¡Pronto habrá!':'Todavía no hay juegos aquí. ¡Pronto habrá!';
+    const msg=s.sources&&cfg.src==='cole'?t_.emptyCole:t_.empty;
     h=`<div class="empty sticker">${msg}</div>`;
   }
   temas.forEach(t=>{
@@ -526,11 +543,11 @@ function renderSubject(id){
     h+=t.worlds.map(w=>{const b=best[t.id+'/'+w.id];
       return `<button class="card sticker" type="button" data-t="${t.id}" data-w="${w.id}" style="--c:${w.c}">
         <span class="ico" aria-hidden="true">${w.ico}</span><span class="nm">${w.nm}</span><span class="sb">${w.sb}</span>
-        <span class="best">${b!=null?'⭐ '+b+' de '+ROUND:''}</span></button>`}).join('');
+        <span class="best">${b!=null?'⭐ '+b+' '+t_.of+' '+ROUND:''}</span></button>`}).join('');
     if(t.worlds.length>1){const b=best[t.id+'/*'];
       h+=`<button class="card sticker all" type="button" data-t="${t.id}" data-w="*" style="--c:#ef6aa6">
-        <span class="ico" aria-hidden="true">🏆</span><span class="nm">Todo el tema</span><span class="sb">${t.nm}: de todo</span>
-        <span class="best">${b!=null?'⭐ '+b+' de '+ROUND:''}</span></button>`;}
+        <span class="ico" aria-hidden="true">🏆</span><span class="nm">${t_.allTema}</span><span class="sb">${t_.allTemaSb(t.nm)}</span>
+        <span class="best">${b!=null?'⭐ '+b+' '+t_.of+' '+ROUND:''}</span></button>`;}
     h+='</div>';
   });
   $('temas').innerHTML=h;show('subject');
@@ -554,6 +571,8 @@ function startGame(c){ctx=c;roundFails=[];
     :c.kind==='redo'?c.list.map(q=>Object.assign({},q,{o:shuffle(q.o),res:null}))
     :buildRound(c.pairs,c.n||ROUND);
   if(!qs.length)return;
+  if(!ctx.lang)ctx.ui=qs.every(q=>q.lang==='en')?'en':'es';else ctx.ui=ctx.lang;
+  $('back').textContent=L(ctx.ui).back;
   qi=0;stars=0;show('game');renderQ();}
 function renderDots(){$('dots').innerHTML=qs.map((q,i)=>`<span class="dot ${i<qi?(q.res||''):i===qi?'now':''}"></span>`).join('')}
 function renderQ(){
@@ -575,13 +594,13 @@ function answer(i,btn){
     if(first){stars++;cur.res='star';if(ctx.kind==='fails'||ctx.kind==='redo')removeFail(cur)}else cur.res='ok';
     const m=withName(pick(cur.lang==='en'?GOOD_EN:GOOD_ES));
     $('fb').className='feedback good';$('fb').innerHTML=(first?'⭐ ':'')+m;sGood();speak([[m,cur.lang]]);
-    $('next').hidden=false;$('next').textContent=qi===qs.length-1?'Ver mis estrellas →':'Siguiente →';$('next').focus({preventScroll:true});
+    $('next').hidden=false;$('next').textContent=qi===qs.length-1?L(cur.lang).last:L(cur.lang).next;$('next').focus({preventScroll:true});
   }else{
     if(first){addFail(cur);roundFails.push(cur)}
     first=false;btn.classList.add('wrong');btn.disabled=true;sBad();
     $('fb').className='feedback bad';
-    const t=cur.lang==='en'?'Oops! Try again.':'¡Casi! Prueba otra vez.';
-    $('fb').innerHTML=t+'<small>'+cur.h+'</small>';speak([[t,cur.lang],[cur.h,'es']]);
+    const t=L(cur.lang).oops;
+    $('fb').innerHTML=t+'<small>'+cur.h+'</small>';speak([[t,cur.lang],[cur.h.replace(/→/g,', then '),cur.lang]]);
   }
   updateFailCount();
 }
@@ -590,18 +609,17 @@ function finish(){
   const total=qs.length;
   if(ctx.bestKey&&(best[ctx.bestKey]==null||stars>best[ctx.bestKey])){best[ctx.bestKey]=stars;store.set('best',best)}
   $('endstars').textContent='⭐'.repeat(stars)+'☆'.repeat(total-stars);
-  const N=NAME();let t,x;
-  if(stars===total){t=N?`¡Lo has bordado, ${N}!`:'¡Lo has bordado!';x='Todas a la primera. ¡Eres un crack!'}
-  else if(stars>=total*.75){t=N?`¡Muy bien, ${N}!`:'¡Muy bien!';x=`Has conseguido ${stars} estrellas de ${total}.`}
-  else if(stars>=total*.4){t='¡Bien hecho!';x=`${stars} estrellas. ¡Vamos a repasar las que fallaste!`}
-  else{t='¡Sigue practicando!';x='Cada vez te saldrá mejor. Repite las falladas y verás.'}
+  const N=NAME(),U=L(ctx.ui);let t,x;
+  if(stars===total){t=U.e1(N);x=U.x1}
+  else if(stars>=total*.75){t=U.e2(N);x=U.x2(stars,total)}
+  else if(stars>=total*.4){t=U.e3;x=U.x3(stars)}
+  else{t=U.e4;x=U.x4}
   if(ctx.kind==='fails'&&!failed.length){t=N?`¡Ya no te queda ninguna, ${N}!`:'¡Ya no te queda ninguna!';x='Has arreglado todas las falladas. 🎉'}
   $('endtitle').textContent=t;$('endtext').textContent=x;
-  const k=roundFails.length;$('redo').hidden=!k;$('redo').textContent=`🔁 Repetir las ${k} falladas`;
-  if(k===1)$('redo').textContent='🔁 Repetir la fallada';
-  $('again').textContent=ctx.kind==='fails'?(failed.length?`Seguir con falladas (${failed.length})`:'Jugar otra vez'):'Jugar otra vez';
+  const k=roundFails.length;$('redo').hidden=!k;$('redo').textContent=k===1?U.redo1:U.redo(k);
+  $('again').textContent=ctx.kind==='fails'?(failed.length?`Seguir con falladas (${failed.length})`:U.again):U.again;$('leave').textContent=U.leave;
   $('again').hidden=ctx.kind==='fails'&&!failed.length;
-  show('end');sWin();speak([[t+' '+x,'es']]);if(stars>=total*.75)confetti();
+  show('end');sWin();speak([[t+' '+x,ctx.ui]]);if(stars>=total*.75)confetti();
 }
 function leave(){try{speechSynthesis.cancel()}catch(e){}
   if(ctx&&ctx.from==='subject'&&curSubj)renderSubject(curSubj.id);else renderHome();}
@@ -609,12 +627,12 @@ function leave(){try{speechSynthesis.cancel()}catch(e){}
 /* ================= launchers ================= */
 function playWorld(tid,wid){const t=curSubj.temas.find(x=>x.id===tid);
   const pairs=wid==='*'?t.worlds.map(w=>({t,w})):[{t,w:t.worlds.find(x=>x.id===wid)}];
-  startGame({kind:'world',pairs,bestKey:t.id+'/'+wid,from:'subject',label:''});}
-function playSubject(){const pairs=worldsOf(visibleTemas(curSubj).filter(temaHasContent));if(pairs.length)startGame({kind:'mix',pairs,n:MIX,from:'subject',label:'Repaso'});}
+  startGame({kind:'world',pairs,bestKey:t.id+'/'+wid,from:'subject',label:'',lang:curSubj.lang});}
+function playSubject(){const pairs=worldsOf(visibleTemas(curSubj).filter(temaHasContent));if(pairs.length)startGame({kind:'mix',pairs,n:MIX,from:'subject',label:curSubj.lang==='en'?'Review':'Repaso',lang:curSubj.lang});}
 function playAll(){const pairs=worldsOf(SUBJECTS.flatMap(s=>s.temas.filter(temaHasContent)));startGame({kind:'mix',pairs,n:MIX,from:'home',label:'Repaso de todo'});}
 function playFails(){if(!failed.length){showNoFails();return}startGame({kind:'fails',from:'home',label:'Fallados'});}
 function showNoFails(){$('endtitle').textContent='¡No tienes falladas!';$('endstars').textContent='🌟';
-  $('endtext').textContent='Cuando falles alguna pregunta, aparecerá aquí para repasarla.';$('redo').hidden=true;$('again').hidden=true;ctx={from:'home'};show('end');
+  $('endtext').textContent='Cuando falles alguna pregunta, aparecerá aquí para repasarla.';$('redo').hidden=true;$('leave').textContent='Volver';$('again').hidden=true;ctx={from:'home'};show('end');
   document.querySelector('[data-nav=fails]').setAttribute('aria-current','page');}
 
 /* ================= settings ================= */
@@ -651,7 +669,7 @@ $('next').addEventListener('click',next);
 $('back').addEventListener('click',leave);
 $('leave').addEventListener('click',leave);
 $('again').addEventListener('click',()=>{if(ctx.kind==='fails')playFails();else if(ctx.kind==='redo')startGame(ctx.parent);else startGame(ctx)});
-$('redo').addEventListener('click',()=>startGame({kind:'redo',list:roundFails.slice(),from:ctx.from,label:'Falladas',parent:ctx.kind==='redo'?ctx.parent:ctx}));
+$('redo').addEventListener('click',()=>startGame({kind:'redo',list:roundFails.slice(),from:ctx.from,label:ctx.lang==='en'?'Missed':'Falladas',lang:ctx.lang,parent:ctx.kind==='redo'?ctx.parent:ctx}));
 $('voice').addEventListener('click',()=>{if(cur)speak([[cur.say,cur.lang]],true)});
 $('nav').addEventListener('click',e=>{const b=e.target.closest('[data-nav]');if(!b)return;
   try{speechSynthesis.cancel()}catch(err){}
