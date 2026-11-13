@@ -258,6 +258,7 @@ body.hasnav .wrap{padding-top:calc(76px + env(safe-area-inset-top,0px))}
 .pbar{height:12px;border-radius:6px;background:#e8ecf5;overflow:hidden}.pbar i{display:block;height:100%}
 .pp{font:700 15px var(--display);text-align:right}
 .precent{list-style:none;padding:0;margin:0}.precent li{padding:6px 0;border-bottom:1px dashed #d6dcea;font-size:15px}
+.precent .pq{display:block}.precent .pans{display:flex;gap:14px;flex-wrap:wrap;margin-top:2px}.pbad{color:var(--red)}.pgood{color:var(--leaf)}
 .precent small{display:block;color:var(--muted);font-size:12px}.precent .emo{font-size:24px}.precent .sw{display:inline-block;width:18px;height:18px;border-radius:50%;vertical-align:middle;border:2px solid var(--ink)}
 .pempty,.pnote{color:var(--muted)}
 #confetti{position:fixed;inset:0;pointer-events:none;z-index:40}
@@ -829,7 +830,7 @@ function addFail(q){const k=q.key;if(!failed.some(f=>f.key===k)){const c=Object.
 function removeFail(q){const n=failed.length;failed=failed.filter(f=>f.key!==q.key);if(failed.length!==n)sess.set('failed',failed)}
 function answer(i,btn){
   if(answered)return;const o=cur.o[i];
-  if(first)logQ(cur,o.value===cur.a);
+  if(first)logQ(cur,o.value===cur.a,o);
   if(o.value===cur.a){answered=true;btn.classList.add('right');
     document.querySelectorAll('.opt').forEach(b=>b.disabled=true);
     if(first){stars++;cur.res='star';if(ctx.kind==='fails'||ctx.kind==='redo')removeFail(cur)}else cur.res='ok';
@@ -930,9 +931,13 @@ document.addEventListener('focusin',e=>{const el=e.target;if(!el.closest||!el.cl
 /* ================= stats (for the parents' corner) and stars (for the sticker album) ================= */
 let stats=Object.assign({w:{},recent:[]},store.get('stats',{}));
 function statKey(a){return a.join(' · ')}
-function logQ(q,ok){if(!q.stat)return;const k=statKey(q.stat);const e=stats.w[k]||(stats.w[k]={s:q.stat[0],n:0,ok:0,last:0});
+/* full statement of a question for the parents' list: what was spoken + what was on screen (numbers, words, pictures) */
+function fullStatement(q){let t=strip(q.say||q.q).trim();const vis=strip((q.v||'').replace(/<\/(span|div|p)>/g,' ')).replace(/\s+/g,' ').trim();
+  if(vis&&vis.length<60&&!t.includes(vis))t+=` · en pantalla: ${vis}`;return t;}
+const ansLabel=o=>o?(/<span class="(emo|sw)/.test(o.label)?o.label:(strip(o.label).trim()||'(dibujo)')):'';
+function logQ(q,ok,chosen){if(!q.stat)return;const k=statKey(q.stat);const e=stats.w[k]||(stats.w[k]={s:q.stat[0],n:0,ok:0,last:0});
   e.n++;if(ok)e.ok++;e.last=Date.now();
-  if(!ok){const right=q.o.find(o=>o.value===q.a);stats.recent.unshift({d:Date.now(),k:q.stat[0]+' · '+q.stat[2],q:strip(q.q),a:right?strip(right.label).trim()||'(dibujo)':'',pic:right&&/<span class="(emo|sw)/.test(right.label)?right.label:''});stats.recent=stats.recent.slice(0,25)}
+  if(!ok){const right=q.o.find(o=>o.value===q.a);stats.recent.unshift({d:Date.now(),k:q.stat[0]+' · '+q.stat[2],q:strip(q.q),full:fullStatement(q),ok:ansLabel(right),bad:ansLabel(chosen)});stats.recent=stats.recent.slice(0,25)}
   store.set('stats',stats);}
 function logGame(name,st,total){const subj=PK.lang==='en'?'English':'Lengua';const k=statKey([subj,'Juegos',strip(name)]);
   const e=stats.w[k]||(stats.w[k]={s:subj,n:0,ok:0,last:0});e.n+=total;e.ok+=Math.min(st,total);e.last=Date.now();store.set('stats',stats);}
@@ -969,7 +974,8 @@ function renderParent(){$('pgate').hidden=true;$('pbody').hidden=false;
     Object.entries(bySubj).forEach(([sname,list])=>{h+=`<p class="psub">${sname}</p>`+list.sort((a,b)=>a.k.localeCompare(b.k)).map(r=>{const c=r.p>=85?'var(--leaf)':r.p>=60?'var(--sun)':'var(--red)';
       return `<div class="prow"><span>${r.k.split(' · ').slice(1).join(' · ')}</span><span class="pbar"><i style="width:${r.p}%;background:${c}"></i></span><span class="pp">${r.p}%</span><small>${r.e.n} preg.</small></div>`}).join('')});
     if(rows.length<ws.length)h+=`<p class="pnote">Los juegos con menos de 3 preguntas aún no salen en la lista.</p>`;
-    if(stats.recent.length)h+=`<h3>❌ Últimos fallos</h3><ul class="precent">${stats.recent.slice(0,12).map(f=>`<li><small>${new Date(f.d).toLocaleDateString('es-ES',{day:'numeric',month:'short'})} · ${f.k}</small>${f.q} → <b>${f.pic||f.a}</b></li>`).join('')}</ul>`;
+    if(stats.recent.length)h+=`<h3>❌ Últimos fallos</h3><ul class="precent">${stats.recent.slice(0,12).map(f=>`<li><small>${new Date(f.d).toLocaleDateString('es-ES',{day:'numeric',month:'short'})} · ${f.k}</small><span class="pq">${f.full||f.q}</span>
+      <span class="pans">${f.bad?`<span class="pbad">Puso: <b>${f.bad}</b> ✗</span>`:''}<span class="pgood">Era: <b>${f.ok||f.pic||f.a}</b> ✓</span></span></li>`).join('')}</ul>`;
   }
   h+=`<div class="endbtns"><button class="btn" type="button" id="preset">🗑️ Borrar datos</button><button class="btn yellow" type="button" id="pclose2">Cerrar</button></div>`;
   $('pbody').innerHTML=h;
