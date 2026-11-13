@@ -27,7 +27,7 @@ body{
 [hidden]{display:none!important}
 .wrap{max-width:780px;margin:0 auto;
   padding-top:calc(16px + env(safe-area-inset-top,0px));
-  padding-bottom:calc(110px + env(safe-area-inset-bottom,0px));
+  padding-bottom:calc(90px + env(safe-area-inset-bottom,0px));
   padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));}
 button,input{font:inherit;color:inherit}
 button{cursor:pointer}
@@ -73,16 +73,19 @@ h2.sec small{font:500 15px var(--body);color:var(--muted)}
 .bigbtn span{font-size:34px}
 .bigbtn small{display:block;font:400 15px var(--body);color:var(--ink)}
 
-/* Bottom nav */
-.nav{position:fixed;left:0;right:0;bottom:0;z-index:10;display:flex;justify-content:center;gap:10px;
-  padding:10px max(12px,env(safe-area-inset-left,0px)) calc(10px + env(safe-area-inset-bottom,0px));
-  background:rgba(255,255,255,.94);border-top:3px solid var(--ink);backdrop-filter:blur(6px)}
-.nav button{flex:1;max-width:220px;display:flex;flex-direction:column;align-items:center;gap:2px;padding:6px 4px;
-  font:600 15px var(--display);background:transparent;border:3px solid transparent;border-radius:16px;position:relative}
-.nav button .i{font-size:28px;line-height:1}
-.nav button[aria-current="page"]{background:var(--o4);border-color:var(--ink)}
-.nav .cnt{position:absolute;top:0;right:calc(50% - 30px);min-width:24px;height:24px;padding:0 6px;border-radius:12px;background:var(--red);color:#fff;font:700 14px/24px var(--display);border:2px solid var(--ink)}
-.nav button:disabled{opacity:.45}
+/* Bottom nav: floating pill */
+.nav{position:fixed;left:50%;bottom:calc(12px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);z-index:10;
+  display:flex;gap:4px;padding:5px;width:max-content;max-width:calc(100% - 24px);
+  background:#fff;border:3px solid var(--ink);border-radius:999px;box-shadow:0 4px 0 var(--ink)}
+.nav button{display:flex;align-items:center;gap:6px;padding:7px 14px;font:600 15px var(--display);
+  background:transparent;border:0;border-radius:999px;position:relative;white-space:nowrap}
+.nav button .i{font-size:20px;line-height:1}
+.nav button[aria-current="page"]{background:var(--sun)}
+.nav button[data-nav=mix]{background:var(--o4)}
+.nav button[data-nav=fails]{background:var(--o3)}
+.nav button[aria-current="page"][data-nav]{background:var(--sun)}
+.nav .cnt{position:absolute;top:-8px;right:-4px;min-width:22px;height:22px;padding:0 5px;border-radius:11px;background:var(--red);color:#fff;font:700 13px/18px var(--display);border:2px solid var(--ink)}
+@media (max-width:420px){.nav button{padding:7px 10px;font-size:14px}}
 
 /* Game */
 .bar{display:flex;align-items:center;gap:12px;margin-bottom:14px}
@@ -94,6 +97,8 @@ h2.sec small{font:500 15px var(--body);color:var(--muted)}
 .qcard{padding:20px 18px 18px}
 .qtext{margin:0 0 14px;font-size:clamp(21px,4.6vw,27px);font-weight:700;line-height:1.35;text-wrap:pretty}
 .qtext em{font-style:normal;color:var(--red);font-family:var(--display);font-size:1.15em;letter-spacing:.02em}
+.qes{margin:-4px 0 14px;padding:8px 12px;font:600 19px/1.35 var(--body);background:#fff4d6;border:2px dashed #e0b84a;border-radius:12px}
+.qes::before{content:"🇪🇸 "}
 .visual{display:flex;justify-content:center;align-items:center;flex-wrap:wrap;gap:10px;min-height:40px}
 .visual:empty{display:none}
 .row{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:12px}
@@ -203,11 +208,13 @@ h2.sec small{font:500 15px var(--body);color:var(--muted)}
     <div class="bar">
       <button class="back" id="back" type="button">← Salir</button>
       <div class="dots" id="dots" aria-label="Progreso"></div>
+      <button class="voice" id="tr" type="button" aria-label="En español" hidden>🇪🇸</button>
       <button class="voice" id="voice" type="button" aria-label="Oír la pregunta">🔊</button>
     </div>
     <p class="tag" id="gtag"></p>
     <div class="qcard sticker">
       <p class="qtext" id="qtext"></p>
+      <p class="qes" id="qes" hidden></p>
       <div class="visual" id="visual"></div>
     </div>
     <div class="opts" id="opts"></div>
@@ -231,7 +238,7 @@ h2.sec small{font:500 15px var(--body);color:var(--muted)}
 
 <nav class="nav" id="nav" aria-label="Menú">
   <button type="button" data-nav="home"><span class="i" aria-hidden="true">🏠</span>Inicio</button>
-  <button type="button" data-nav="mix"><span class="i" aria-hidden="true">🔀</span>Repaso de todo</button>
+  <button type="button" data-nav="mix"><span class="i" aria-hidden="true">🔀</span>Repaso</button>
   <button type="button" data-nav="fails"><span class="i" aria-hidden="true">🔁</span>Fallados<span class="cnt" id="failcnt" hidden></span></button>
 </nav>
 
@@ -309,20 +316,17 @@ const bigv=e=>`<div class="big">${e}</div>`;
 
 /* ================= ENGLISH vocabulary ================= */
 const V={
-  colours:[['red','#e8483a','rojo'],['blue','#2f63d6','azul'],['yellow','#ffc83d','amarillo'],['green','#34ad62','verde'],
-           ['pink','#ef6aa6','rosa'],['orange','#f08a3a','naranja'],['purple','#7a5cf0','morado'],['black','#1d1d1d','negro']],
+  colours:[['red','#e8483a','rojo'],['blue','#2f63d6','azul'],['yellow','#ffc83d','amarillo'],['green','#34ad62','verde'],['pink','#ef6aa6','rosa'],['orange','#f08a3a','naranja']],
   numbers:['zero','one','two','three','four','five','six','seven','eight','nine','ten'],
-  zoo:[['lion','🦁','león'],['elephant','🐘','elefante'],['monkey','🐒','mono'],['giraffe','🦒','jirafa'],['tiger','🐯','tigre'],
-       ['zebra','🦓','cebra'],['snake','🐍','serpiente'],['bear','🐻','oso'],['hippo','🦛','hipopótamo'],['crocodile','🐊','cocodrilo'],['penguin','🐧','pingüino']],
+  zoo:[['lion','🦁','león'],['elephant','🐘','elefante'],['monkey','🐒','mono'],['giraffe','🦒','jirafa'],['tiger','🐯','tigre'],['zebra','🦓','cebra'],['snake','🐍','serpiente'],['bear','🐻','oso']],
   days:['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'],
   daysEs:['lunes','martes','miércoles','jueves','viernes','sábado','domingo'],
   months:['January','February','March','April','May','June','July','August','September','October','November','December'],
-  monthsEs:['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'],
-  actions:[['jump','🦘','saltar'],['run','🏃','correr'],['crouch down','🧎','agacharse'],['sit down','🪑','sentarse'],['clap','👏','dar palmas'],['dance','💃','bailar']],
+  actions:[['jump','🦘','saltar'],['run','🏃','correr'],['crouch down','🧎','agacharse']],
   dirs:[['up','⬆️','arriba'],['down','⬇️','abajo'],['left','⬅️','izquierda'],['right','➡️','derecha']],
   halloween:[['cat','🐱','gato'],['bat','🦇','murciélago'],['monster','👹','monstruo'],['ghost','👻','fantasma'],['zombie','🧟','zombi'],['spider','🕷️','araña']],
-  moves:[['stomp','monster','👹','pisar fuerte'],['crawl','spider','🕷️','gatear'],['float','ghost','👻','flotar'],['walk','zombie','🧟','caminar'],['tiptoe','cat','🐱','ir de puntillas'],['flap','bat','🦇','aletear']],
-  body:[['eyes','👀','ojos'],['mouth','👄','boca'],['nose','👃','nariz'],['ears','👂','orejas'],['hands','🙌','manos'],['legs','🦵','piernas'],['feet','🦶','pies']],
+  moves:[['stomp','monster','👹'],['crawl','spider','🕷️'],['float','ghost','👻'],['walk','zombie','🧟'],['tiptoe','cat','🐱'],['flap','bat','🦇']],
+  body:[['eyes','👀','ojos'],['mouth','👄','boca'],['nose','👃','nariz'],['ears','👂','orejas'],['hands','🙌','manos'],['legs','🦵','piernas']],
   emotions:[['happy','😀','contento'],['sad','😢','triste'],['angry','😠','enfadado'],['surprised','😮','sorprendido'],['excited','🤩','emocionado'],['silly','🤪','tontorrón']],
 };
 const E=(q,say,v,o,a,h,extra)=>Object.assign({q,say,lang:'en',v,o,a,h},extra||{});
@@ -376,56 +380,48 @@ const G={
   daCinco(){const t=R(3,9),ra=R(0,t),right=`${ra} + ${t-ra}`;const w=new Set();while(w.size<2){const x=R(0,8),y=R(0,10-x);if(x+y!==t)w.add(`${x} + ${y}`)}
     return{q:`¿Qué operación da ${t}?`,say:`¿Qué operación da ${t}?`,v:`<div class="eq"><b>${t}</b></div>`,o:shuffle([[right,'ok'],...[...w].map(s=>[s,s])]).map(x=>({label:x[0],value:x[1]})),a:'ok',h:`${right} = ${t}.`}},
 
-  /* ---------- English · colours (all hints in English) ---------- */
+  /* ---------- English: short questions; es = Spanish translation for the 🇪🇸 button.
+     The word being practised stays in English inside es, so translating never gives the answer away. ---------- */
   colourName(){const {ans,set}=choose(V.colours);
-    return E('What colour is it?','What colour is it?',`<div class="blob" style="background:${ans[1]}"></div>`,set.map(c=>({label:c[0],value:c[0]})),ans[0],`It's <b>${ans[0]}</b>!`)},
+    return E('What colour is it?','What colour is it?',`<div class="blob" style="background:${ans[1]}"></div>`,set.map(c=>({label:c[0],value:c[0]})),ans[0],`It's <b>${ans[0]}</b>!`,{es:'¿De qué color es?'})},
   touchColour(){const {ans,set}=choose(V.colours,4);
-    return E(`Touch <em>${ans[0].toUpperCase()}</em>.`,`Touch ${ans[0]}.`,'',set.map(c=>({label:`<span class="sw" style="background:${c[1]}"></span>`,value:c[0]})),ans[0],`This is <b>${ans[0]}</b>: <span class="sw" style="display:inline-block;width:22px;height:22px;vertical-align:middle;border-radius:50%;border:2px solid #1d2b5a;background:${ans[1]}"></span>`)},
-  /* ---------- numbers ---------- */
-  countStars(){const n=R(1,10),e=pick(['⭐','🕯️','🎈','🍎']),nm={'⭐':'stars','🕯️':'candles','🎈':'balloons','🍎':'apples'}[e];
-    return E(`How many ${nm}?`,`How many ${nm}?`,items(e,n),numOpts(n,1,10),n,`Let's count: ${V.numbers.slice(1,n+1).join(', ')}. <b>${V.numbers[n]}</b>!`)},
+    return E(`Touch <em>${ans[0].toUpperCase()}</em>.`,`Touch ${ans[0]}.`,'',set.map(c=>({label:`<span class="sw" style="background:${c[1]}"></span>`,value:c[0]})),ans[0],`This is <b>${ans[0]}</b>: <span class="sw" style="display:inline-block;width:22px;height:22px;vertical-align:middle;border-radius:50%;border:2px solid #1d2b5a;background:${ans[1]}"></span>`,{es:`Toca el color ${ans[0].toUpperCase()}.`})},
+  countStars(){const n=R(1,10),e=pick(['⭐','🎈','🍎']),nm={'⭐':'stars','🎈':'balloons','🍎':'apples'}[e],es={'⭐':'estrellas','🎈':'globos','🍎':'manzanas'}[e];
+    return E(`How many ${nm}?`,`How many ${nm}?`,items(e,n),numOpts(n,1,10),n,`Let's count: ${V.numbers.slice(1,n+1).join(', ')}!`,{es:`¿Cuántas ${es} hay?`})},
   numberWord(){const n=R(1,10);const s=new Set([n]);while(s.size<3)s.add(R(1,10));
-    return E('Which word is this number?','Which word is this number?',`<div class="eq" style="font-size:90px"><b>${n}</b></div>`,shuffle([...s]).map(k=>({label:V.numbers[k],value:k})),n,`${n} is <b>${V.numbers[n]}</b>.`)},
+    return E('What number is it?','What number is it?',`<div class="eq" style="font-size:90px"><b>${n}</b></div>`,shuffle([...s]).map(k=>({label:V.numbers[k],value:k})),n,`${n} is <b>${V.numbers[n]}</b>.`,{es:'¿Cómo se dice este número en inglés?'})},
   wordNumber(){const n=R(1,10);const s=new Set([n]);while(s.size<3)s.add(R(1,10));
-    return E(`Touch number <em>${V.numbers[n].toUpperCase()}</em>.`,`Touch number ${V.numbers[n]}.`,'',shuffle([...s]).map(k=>({label:`<span class="num">${k}</span>`,value:k})),n,`${V.numbers[n][0].toUpperCase()+V.numbers[n].slice(1)} is <b>${n}</b>.`)},
+    return E(`Touch <em>${V.numbers[n].toUpperCase()}</em>.`,`Touch ${V.numbers[n]}.`,'',shuffle([...s]).map(k=>({label:`<span class="num">${k}</span>`,value:k})),n,`${V.numbers[n][0].toUpperCase()+V.numbers[n].slice(1)} is <b>${n}</b>.`,{es:`Toca el número ${V.numbers[n].toUpperCase()}.`})},
   howOld(){const n=R(3,9);
-    return E('How old is the bear? Count the candles!','How old is the bear? Count the candles!',`<div class="row">${bigv('🐻')}${items('🕯️',n)}</div>`,numOpts(n,1,10),n,`${n} candles: "I am <b>${V.numbers[n]}</b>!"`)},
-  /* ---------- zoo ---------- */
+    return E('How old is the bear?','How old is the bear?',`<div class="row">${bigv('🐻')}${items('🕯️',n)}</div>`,numOpts(n,1,10),n,`Count the candles: "I am <b>${V.numbers[n]}</b>!"`,{es:'¿Cuántos años tiene el oso? Cuenta las velas.'})},
   whatAnimal(){const {ans,set}=choose(V.zoo);
-    return E('What animal is it?','What animal is it?',bigv(ans[1]),set.map(a=>({label:a[0],value:a[0]})),ans[0],`It's a <b>${ans[0]}</b> ${ans[1]}.`)},
+    return E('What animal is it?','What animal is it?',bigv(ans[1]),set.map(a=>({label:a[0],value:a[0]})),ans[0],`It's a <b>${ans[0]}</b> ${ans[1]}.`,{es:'¿Qué animal es?'})},
   touchAnimal(){const {ans,set}=choose(V.zoo,4);
-    return E(`Touch the <em>${ans[0].toUpperCase()}</em>.`,`Touch the ${ans[0]}.`,'',set.map(a=>({label:emo(a[1]),value:a[0]})),ans[0],`This is the <b>${ans[0]}</b> ${ans[1]}.`)},
+    return E(`Touch the <em>${ans[0].toUpperCase()}</em>.`,`Touch the ${ans[0]}.`,'',set.map(a=>({label:emo(a[1]),value:a[0]})),ans[0],`This is the <b>${ans[0]}</b> ${ans[1]}.`,{es:`Toca el ${ans[0].toUpperCase()}.`})},
   bigSmall(){const a=pick(V.zoo),big=Math.random()<.5;const o=shuffle([['big',100],['small',40]]);
-    return E(`Touch the <em>${big?'BIG':'SMALL'}</em> ${a[0]}.`,`Touch the ${big?'big':'small'} ${a[0]}.`,'',o.map(x=>({label:`<span style="font-size:${x[1]}px;line-height:1">${a[1]}</span>`,value:x[0]})),big?'big':'small',big?`<b>Big</b> ${a[1]} — <span style="font-size:14px">small</span> ${a[1]}`:`<b>Small</b> ${a[1]} — big ${a[1]}`)},
-  /* ---------- days & months ---------- */
-  dayAfter(){const i=R(0,5),ans=V.days[i+1];const s=new Set([ans]);while(s.size<3)s.add(pick(V.days.filter(d=>d!==V.days[i])));
-    return E(`What day comes after <em>${V.days[i]}</em>?`,`What day comes after ${V.days[i]}?`,'',shuffle([...s]).map(d=>({label:d,value:d})),ans,`${V.days[i]} → <b>${ans}</b>`)},
+    return E(`Touch the <em>${big?'BIG':'SMALL'}</em> ${a[0]}.`,`Touch the ${big?'big':'small'} ${a[0]}.`,'',o.map(x=>({label:`<span style="font-size:${x[1]}px;line-height:1">${a[1]}</span>`,value:x[0]})),big?'big':'small',big?`<b>Big</b> ${a[1]}!`:`<b>Small</b> <span style="font-size:14px">${a[1]}</span>!`,{es:`Toca el ${a[0]} ${big?'BIG':'SMALL'}.`})},
+  dayAfter(){const i=R(0,3),ans=V.days[i+1];const s=new Set([ans]);while(s.size<3)s.add(pick(V.days.slice(0,6).filter(d=>d!==V.days[i])));
+    return E('What day comes next?',`${V.days.slice(0,i+1).join(', ')}… What day comes next?`,`<div class="eq" style="font-size:30px">${V.days.slice(0,i+1).join(', ')}, <b>?</b></div>`,shuffle([...s]).map(d=>({label:d,value:d})),ans,`${V.days[i]} → <b>${ans}</b>`,{es:`¿Qué día va después de ${V.days[i]} (${V.daysEs[i]})?`})},
   isDay(){const d=pick(V.days);const o=[[d,'ok'],[pick(V.colours)[0],'x1'],[pick(V.zoo)[0],'x2']];
-    return E('Which one is a day of the week?','Which one is a day of the week?',bigv('📅'),txtOpts(o),'ok',`<b>${d}</b> is a day. Monday, Tuesday, Wednesday…`)},
-  isMonth(){const m=pick(V.months);const o=[[m,'ok'],[pick(V.days),'x1'],[pick(V.colours)[0],'x2']];
-    return E('Which one is a month?','Which one is a month?',bigv('🗓️'),txtOpts(o),'ok',`<b>${m}</b> is a month. January, February, March…`)},
-  monthAfter(){const i=R(0,5),ans=V.months[i+1];const s=new Set([ans]);while(s.size<3)s.add(V.months[R(0,7)]);s.delete(V.months[i]);while(s.size<3)s.add(V.months[R(8,11)]);
-    return E(`What month comes after <em>${V.months[i]}</em>?`,`What month comes after ${V.months[i]}?`,'',shuffle([...s]).map(d=>({label:d,value:d})),ans,`${V.months[i]} → <b>${ans}</b>`)},
-  /* ---------- actions ---------- */
+    return E('Which one is a day?','Which one is a day?',bigv('📅'),txtOpts(o),'ok',`<b>${d}</b> is a day.`,{es:'¿Cuál de estas palabras es un día de la semana?'})},
+  isMonth(){const m=pick(V.months);const o=[[m,'ok'],[pick(V.colours)[0],'x1'],[pick(V.zoo)[0],'x2']];
+    return E('Which one is a month?','Which one is a month?',bigv('🗓️'),txtOpts(o),'ok',`<b>${m}</b> is a month.`,{es:'¿Cuál de estas palabras es un mes?'})},
   teacherSays(){const {ans,set}=choose(V.actions);
-    return E(`Teacher says: <em>${ans[0].toUpperCase()}!</em>`,`Teacher says: ${ans[0]}!`,'',set.map(a=>({label:emo(a[1]),value:a[0]})),ans[0],`<b>${ans[0][0].toUpperCase()+ans[0].slice(1)}</b> ${ans[1]}`)},
+    return E(`Teacher says: <em>${ans[0].toUpperCase()}!</em>`,`Teacher says: ${ans[0]}!`,'',set.map(a=>({label:emo(a[1]),value:a[0]})),ans[0],`<b>${ans[0][0].toUpperCase()+ans[0].slice(1)}</b> ${ans[1]}`,{es:`La profe dice: ¡${ans[0].toUpperCase()}! Toca el dibujo.`})},
   direction(){const {ans,set}=choose(V.dirs,4);
-    return E(`Go <em>${ans[0].toUpperCase()}</em>!`,`Go ${ans[0]}!`,'',set.map(a=>({label:emo(a[1]),value:a[0]})),ans[0],`<b>${ans[0][0].toUpperCase()+ans[0].slice(1)}</b> ${ans[1]}`)},
-  /* ---------- Halloween ---------- */
+    return E(`Go <em>${ans[0].toUpperCase()}</em>!`,`Go ${ans[0]}!`,'',set.map(a=>({label:emo(a[1]),value:a[0]})),ans[0],`<b>${ans[0][0].toUpperCase()+ans[0].slice(1)}</b> ${ans[1]}`,{es:`¡Ve hacia ${ans[0].toUpperCase()}! Toca la flecha.`})},
   hallWord(){const {ans,set}=choose(V.halloween);
-    return E('Who is it?','Who is it?',bigv(ans[1]),set.map(a=>({label:a[0],value:a[0]})),ans[0],`It's a <b>${ans[0]}</b> ${ans[1]}.`)},
+    return E('Who is it?','Who is it?',bigv(ans[1]),set.map(a=>({label:a[0],value:a[0]})),ans[0],`It's a <b>${ans[0]}</b> ${ans[1]}.`,{es:'¿Quién es?'})},
   hallTouch(){const {ans,set}=choose(V.halloween,4);
-    return E(`Touch the <em>${ans[0].toUpperCase()}</em>.`,`Touch the ${ans[0]}.`,'',set.map(a=>({label:emo(a[1]),value:a[0]})),ans[0],`This is the <b>${ans[0]}</b> ${ans[1]}.`)},
+    return E(`Touch the <em>${ans[0].toUpperCase()}</em>.`,`Touch the ${ans[0]}.`,'',set.map(a=>({label:emo(a[1]),value:a[0]})),ans[0],`This is the <b>${ans[0]}</b> ${ans[1]}.`,{es:`Toca el ${ans[0].toUpperCase()}.`})},
   hallMove(){const {ans,set}=choose(V.moves);
-    if(Math.random()<.5)return E(`<em>${ans[0].toUpperCase()}</em> like a…`,`${ans[0]} like a…`,'',set.map(m=>({label:emo(m[2]),value:m[1]})),ans[1],`${ans[0][0].toUpperCase()+ans[0].slice(1)} like a <b>${ans[1]}</b> ${ans[2]}`);
-    return E(`How does the ${ans[1]} move?`,`How does the ${ans[1]} move?`,bigv(ans[2]),set.map(m=>({label:m[0],value:m[0]})),ans[0],`The ${ans[1]} can <b>${ans[0]}</b>.`)},
+    return E(`<em>${ans[0].toUpperCase()}</em> like a…`,`${ans[0]} like a…`,'',set.map(m=>({label:emo(m[2]),value:m[1]})),ans[1],`${ans[0][0].toUpperCase()+ans[0].slice(1)} like a <b>${ans[1]}</b> ${ans[2]}`,{es:`¿Quién hace ${ans[0].toUpperCase()}? Toca el dibujo.`})},
   bodyTouch(){const {ans,set}=choose(V.body,4);
-    return E(`My monster has big <em>${ans[0].toUpperCase()}</em>. Touch the ${ans[0]}!`,`My monster has big ${ans[0]}. Touch the ${ans[0]}!`,bigv('👹'),set.map(b=>({label:emo(b[1]),value:b[0]})),ans[0],`These are the <b>${ans[0]}</b> ${ans[1]}.`)},
-  /* ---------- emotions ---------- */
+    return E(`Touch the <em>${ans[0].toUpperCase()}</em>.`,`Touch the ${ans[0]}.`,bigv('👹'),set.map(b=>({label:emo(b[1]),value:b[0]})),ans[0],`These are the <b>${ans[0]}</b> ${ans[1]}.`,{es:`Toca los ${ans[0].toUpperCase()} del monstruo.`})},
   emoWord(){const {ans,set}=choose(V.emotions);
-    return E('How do I feel?','How do I feel?',bigv(ans[1]),set.map(a=>({label:a[0],value:a[0]})),ans[0],`I feel <b>${ans[0]}</b> ${ans[1]}.`)},
+    return E('How do I feel?','How do I feel?',bigv(ans[1]),set.map(a=>({label:a[0],value:a[0]})),ans[0],`I'm <b>${ans[0]}</b> ${ans[1]}.`,{es:'¿Cómo me siento?'})},
   emoTouch(){const {ans,set}=choose(V.emotions,4);
-    return E(`Find the <em>${ans[0].toUpperCase()}</em> face.`,`Find the ${ans[0]} face.`,'',set.map(a=>({label:emo(a[1]),value:a[0]})),ans[0],`This face is <b>${ans[0]}</b> ${ans[1]}.`)},
+    return E(`Touch <em>${ans[0].toUpperCase()}</em>.`,`Touch ${ans[0]}.`,'',set.map(a=>({label:emo(a[1]),value:a[0]})),ans[0],`This face is <b>${ans[0]}</b> ${ans[1]}.`,{es:`Toca la cara ${ans[0].toUpperCase()}.`})},
 };
 
 /* ================= CONTENT: subjects → temas → mundos =================
@@ -445,9 +441,9 @@ const SUBJECTS=[
     {id:'ia-hello',src:'academia',nm:'Hello!',sb:'Academy · October',worlds:[
       {id:'colours',nm:'Colours',sb:'Red, blue, green…',ico:'🎨',c:'#e8483a',gens:['colourName','touchColour']},
       {id:'numbers',nm:'Numbers',sb:'One to ten',ico:'🔟',c:'#ffc83d',gens:['countStars','numberWord','wordNumber','howOld']},
-      {id:'zoo',nm:'Zoo animals',sb:'Animals, big & small',ico:'🦁',c:'#34ad62',gens:['whatAnimal','touchAnimal','touchAnimal','bigSmall']},
-      {id:'days',nm:'Days & months',sb:'Monday, January…',ico:'📅',c:'#2f63d6',gens:['dayAfter','isDay','isMonth','monthAfter']},
-      {id:'actions',nm:'Teacher says!',sb:'Jump, run, left, right',ico:'🦘',c:'#7a5cf0',gens:['teacherSays','direction']},
+      {id:'zoo',nm:'Zoo animals',sb:'Lion, monkey… big, small',ico:'🦁',c:'#34ad62',gens:['whatAnimal','touchAnimal','touchAnimal','bigSmall']},
+      {id:'days',nm:'Days & months',sb:'Monday, Tuesday…',ico:'📅',c:'#2f63d6',gens:['dayAfter','isDay','isMonth']},
+      {id:'actions',nm:'Teacher says!',sb:'Jump, run, up, down',ico:'🦘',c:'#7a5cf0',gens:['teacherSays','direction']},
     ]},
     {id:'ia-halloween',src:'academia',nm:'Halloween',sb:'Academy · end of October',worlds:[
       {id:'monsters',nm:'Monsters',sb:'Ghost, bat, spider…',ico:'👻',c:'#f08a3a',gens:['hallWord','hallTouch']},
@@ -578,7 +574,7 @@ function renderDots(){$('dots').innerHTML=qs.map((q,i)=>`<span class="dot ${i<qi
 function renderQ(){
   cur=qs[qi];first=true;answered=false;renderDots();
   $('gtag').textContent=(ctx.label?ctx.label+'  ·  ':'')+cur.tag;
-  $('qtext').innerHTML=cur.q;$('visual').innerHTML=cur.v;$('fb').innerHTML='';$('fb').className='feedback';$('next').hidden=true;
+  $('qtext').innerHTML=cur.q;$('qes').hidden=true;$('qes').textContent=cur.es||'';$('tr').hidden=!cur.es;$('visual').innerHTML=cur.v;$('fb').innerHTML='';$('fb').className='feedback';$('next').hidden=true;
   $('opts').style.gridTemplateColumns=cur.wide?'1fr':'';
   $('opts').innerHTML=cur.o.map((o,i)=>`<button class="opt" type="button" data-i="${i}">${o.label}</button>`).join('');
   speak([[cur.say,cur.lang]]);
@@ -671,6 +667,7 @@ $('leave').addEventListener('click',leave);
 $('again').addEventListener('click',()=>{if(ctx.kind==='fails')playFails();else if(ctx.kind==='redo')startGame(ctx.parent);else startGame(ctx)});
 $('redo').addEventListener('click',()=>startGame({kind:'redo',list:roundFails.slice(),from:ctx.from,label:ctx.lang==='en'?'Missed':'Falladas',lang:ctx.lang,parent:ctx.kind==='redo'?ctx.parent:ctx}));
 $('voice').addEventListener('click',()=>{if(cur)speak([[cur.say,cur.lang]],true)});
+$('tr').addEventListener('click',()=>{if(!cur||!cur.es)return;$('qes').hidden=false;speak(cur.es.split(/([A-Z]{2,}(?: [A-Z]{2,})*)/).map((t,i)=>[i%2?t.toLowerCase():t,i%2?'en':'es']).filter(x=>x[0].trim()),true)});
 $('nav').addEventListener('click',e=>{const b=e.target.closest('[data-nav]');if(!b)return;
   try{speechSynthesis.cancel()}catch(err){}
   if(b.dataset.nav==='home')renderHome();else if(b.dataset.nav==='mix')playAll();else playFails();});
