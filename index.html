@@ -261,6 +261,9 @@ body.hasnav .wrap{padding-top:calc(76px + env(safe-area-inset-top,0px))}
 .precent .pq{display:block}.precent .pans{display:flex;gap:14px;flex-wrap:wrap;margin-top:2px}.pbad{color:var(--red)}.pgood{color:var(--leaf)}
 .precent small{display:block;color:var(--muted);font-size:12px}.precent .emo{font-size:24px}.precent .sw{display:inline-block;width:18px;height:18px;border-radius:50%;vertical-align:middle;border:2px solid var(--ink)}
 .pempty,.pnote{color:var(--muted)}
+.story{width:100%;text-align:left;font:500 clamp(18px,4.4vw,21px)/1.6 var(--body);background:#fffbea;border:2.5px dashed #e0b84a;border-radius:16px;padding:12px 16px;margin-bottom:4px}
+.story p{margin:0}.story .story-t{font:700 20px var(--display);margin-bottom:6px;color:var(--blue)}
+.opt{text-wrap:balance}
 #confetti{position:fixed;inset:0;pointer-events:none;z-index:40}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style>
@@ -300,6 +303,7 @@ body.hasnav .wrap{padding-top:calc(76px + env(safe-area-inset-top,0px))}
       <button class="bigbtn sticker" id="subjAll" type="button"><span aria-hidden="true">🏆</span><div><div id="subjAllT"></div><small id="subjAllS"></small></div></button>
       <button class="bigbtn sticker games" id="opsBtn" type="button" hidden><span aria-hidden="true">➕</span><div><div>Operaciones</div><small>Sumas y restas</small></div></button>
       <button class="bigbtn sticker games" id="gamesBtn" type="button" hidden><span aria-hidden="true">🎮</span><div><div id="gamesT">Games</div><small>Random word games</small></div></button>
+      <button class="bigbtn sticker games" id="readBtn" type="button" hidden><span aria-hidden="true">📖</span><div><div>Lectura</div><small>Cuentos y frases</small></div></button>
       <button class="bigbtn sticker sayb" id="sayBtn" type="button" hidden><span aria-hidden="true">🗣️</span><div><div>Say it!</div><small>Speak in English</small></div></button>
     </div>
     <div id="temas"></div>
@@ -702,13 +706,13 @@ const SUBJECTS=[
 
 /* ================= UI text (Spanish / English) ================= */
 const T={
-  es:{temas:n=>n+(n===1?' tema':' temas'),none:'Aún sin juegos',soon:'Pronto',allSubj:n=>'Repaso de todo '+n,allSubjSb:'Un poco de cada tema',
+  es:{temas:n=>n+(n===1?' tema':' temas'),none:'Aún sin juegos',soon:'Pronto',allSubj:n=>`Repaso<span class="wide"> de todo ${n}</span>`,allSubjSb:'Un poco de cada tema',
       allTema:'Todo el tema',allTemaSb:t=>t+': de todo',of:'de',empty:'Todavía no hay juegos aquí. ¡Pronto habrá!',emptyCole:'Todavía no hay temas del cole. ¡Pronto habrá!',
       back:'← Salir',next:'Siguiente →',last:'Ver mis estrellas →',oops:'¡Casi! Prueba otra vez.',grade:'1.º de Primaria',
       e1:n=>n?`¡Lo has bordado, ${n}!`:'¡Lo has bordado!',x1:'Todas a la primera. ¡Eres un crack!',e2:n=>n?`¡Muy bien, ${n}!`:'¡Muy bien!',x2:(s,t)=>`Has conseguido ${s} estrellas de ${t}.`,
       e3:'¡Bien hecho!',x3:s=>`${s} estrellas. ¡Vamos a repasar las que fallaste!`,e4:'¡Sigue practicando!',x4:'Cada vez te saldrá mejor. Repite las falladas y verás.',
       redo1:'🔁 Repetir la fallada',redo:k=>`🔁 Repetir las ${k} falladas`,again:'Jugar otra vez',leave:'Volver'},
-  en:{temas:n=>n+(n===1?' unit':' units'),none:'Coming soon',soon:'Soon',allSubj:n=>'Review all '+n,allSubjSb:'A bit of every unit',
+  en:{temas:n=>n+(n===1?' unit':' units'),none:'Coming soon',soon:'Soon',allSubj:n=>`Review<span class="wide"> all ${n}</span>`,allSubjSb:'A bit of every unit',
       allTema:'Whole unit',allTemaSb:t=>t+': everything',of:'of',empty:'No games here yet. Coming soon!',emptyCole:'No school units yet. Coming soon!',
       back:'← Exit',next:'Next →',last:'See my stars →',oops:'Oops! Try again.',grade:'Year 1',
       e1:n=>n?`Perfect, ${n}!`:'Perfect!',x1:'All right the first time. You are a star!',e2:n=>n?`Very good, ${n}!`:'Very good!',x2:(s,t)=>`You got ${s} stars out of ${t}.`,
@@ -768,10 +772,10 @@ function renderSubject(id){
   }else $('chips').hidden=true;
   const temas=visibleTemas(s).filter(temaHasContent);
   $('subjAll').hidden=!temas.length;
-  const isEN=s.id==='ingles'&&temas.length;$('gamesBtn').hidden=!(isEN||(s.id==='lengua'&&temas.length));$('sayBtn').hidden=!isEN;$('opsBtn').hidden=s.id!=='mates';
+  const isEN=s.id==='ingles'&&temas.length;$('gamesBtn').hidden=!(isEN||(s.id==='lengua'&&temas.length));$('sayBtn').hidden=!isEN;$('opsBtn').hidden=s.id!=='mates';$('readBtn').hidden=s.id!=='lengua';
   $('gamesT').textContent=isEN?'Games':'Juegos';
   const srcName=s.sources&&cfg.src!=='all'?' ('+s.sources.find(x=>x[0]===cfg.src)[1]+')':'';
-  $('subjAllT').innerHTML=t_.allSubj('<span class="wide">'+s.nm+srcName+'</span>');$('subjAllS').textContent=t_.allSubjSb;
+  $('subjAllT').innerHTML=t_.allSubj(s.nm+srcName);$('subjAllS').textContent=t_.allSubjSb;
   let h='';
   if(!temas.length){
     const msg=s.sources&&cfg.src==='cole'?t_.emptyCole:t_.empty;
@@ -819,7 +823,7 @@ function buildRound(pairs,n,smart){const out=[];const seen=new Set();let guard=0
 
 function startGame(c){ctx=c;roundFails=[];
   qs=c.kind==='fails'?shuffle(failed).slice(0,FAILMAX).map(q=>Object.assign({},q,{o:shuffle(q.o),res:null}))
-    :c.kind==='redo'?c.list.map(q=>Object.assign({},q,{o:shuffle(q.o),res:null}))
+    :(c.kind==='redo'||c.kind==='list')?c.list.map(q=>Object.assign({},q,{o:shuffle(q.o),res:null}))
     :buildRound(c.pairs,c.n||ROUND,c.smart);
   if(!qs.length)return;
   if(!ctx.lang)ctx.ui=qs.every(q=>q.lang==='en')?'en':'es';else ctx.ui=ctx.lang;
@@ -938,6 +942,53 @@ document.addEventListener('focusin',e=>{const el=e.target;if(!el.closest||!el.cl
   setTimeout(()=>{fitDialogs();el.scrollIntoView({block:'center',behavior:'smooth'})},350);});
 
 
+/* ================= LENGUA · LECTURA (reading level above the units; add stories here) ================= */
+const STORIES=[
+ {t:'Lola y Pipo',e:'🐶',x:'Lola tiene un perro que se llama Pipo. Pipo es pequeño y tiene las orejas muy largas. Cada mañana, Lola y Pipo van al parque. Un día, Pipo encontró una pelota roja debajo de un banco. Lola buscó al dueño, pero no había nadie. Así que la pelota roja se fue a casa con ellos.',
+  q:[['¿Cómo se llama el perro?','Pipo',['Lolo','Pepe']],['¿De qué color era la pelota?','Roja',['Azul','Verde']],['¿Dónde encontró Pipo la pelota?','Debajo de un banco',['Encima de un árbol','En su casa']]]},
+ {t:'El cumpleaños de Amal',e:'🎂',x:'Hoy es el cumpleaños de Amal y cumple siete años. Su abuela le ha hecho una tarta de chocolate con fresas. Sus amigos le regalan un libro de dinosaurios y unas pinturas. Amal sopla las velas y pide un deseo, pero no se lo cuenta a nadie. ¡Si lo cuenta, no se cumple!',
+  q:[['¿Cuántos años cumple Amal?','Siete',['Seis','Ocho']],['¿Quién hizo la tarta?','Su abuela',['Su mamá','Amal']],['¿Por qué Amal no cuenta su deseo?','Porque si lo cuenta, no se cumple',['Porque se le ha olvidado','Porque no ha pedido ninguno']]]},
+ {t:'Tula, la tortuga',e:'🐢',x:'Tula es una tortuga muy lenta. Los conejos se ríen de ella porque tarda mucho en llegar a todas partes. Un día empezó a llover muchísimo. Los conejos se mojaron y tuvieron mucho frío. Tula no se mojó nada: ¡se metió dentro de su caparazón! Desde ese día, los conejos ya no se ríen de ella.',
+  q:[['¿Por qué se reían los conejos de Tula?','Porque era muy lenta',['Porque era muy pequeña','Porque no sabía nadar']],['¿Qué pasó un día?','Llovió muchísimo',['Nevó mucho','Hizo mucho calor']],['¿Por qué Tula no se mojó?','Se metió en su caparazón',['Tenía un paraguas','Se quedó en su casa']]]},
+ {t:'El cohete de Ulu',e:'🚀',x:'Ulu quiere ser astronauta. Con una caja grande de cartón ha hecho un cohete. Lo ha pintado de azul y le ha puesto una ventana redonda. Dentro lleva una linterna, un bocadillo y su osito. «¡Tres, dos, uno… despegamos!», grita Ulu. Su hermano pequeño también quiere subir, y Ulu le deja ser el copiloto.',
+  q:[['¿Con qué hizo Ulu el cohete?','Con una caja de cartón',['Con maderas','Con papel de periódico']],['¿Qué lleva Ulu dentro del cohete?','Su osito',['Un gato','Una pelota']],['¿Quién es el copiloto?','Su hermano pequeño',['Su mamá','Su osito']]]},
+ {t:'El girasol de Pablo',e:'🌻',x:'En el jardín de Pablo hay una planta muy pequeña. Pablo la riega todos los días con su regadera verde. Pasan muchos días y la planta crece y crece. Una mañana, Pablo ve que tiene una flor amarilla enorme. ¡Es un girasol! Pablo está tan contento que se lo enseña a toda su clase.',
+  q:[['¿Con qué riega Pablo la planta?','Con una regadera verde',['Con un vaso','Con una manguera']],['¿Qué flor le salió a la planta?','Un girasol',['Una rosa','Una amapola']],['¿Cómo se sentía Pablo?','Muy contento',['Triste','Enfadado']]]},
+ {t:'Mimí no quiere bañarse',e:'🐱',x:'Mimí es una gata blanca a la que no le gusta nada el agua. Cuando ve la bañera, corre a esconderse debajo de la cama. Un día, Mimí se cayó en un charco de barro y se puso toda marrón. ¡Nadie la reconocía! Al final, Mimí se dejó bañar y volvió a ser blanca.',
+  q:[['¿De qué color es Mimí?','Blanca',['Negra','Gris']],['¿Dónde se esconde Mimí cuando ve la bañera?','Debajo de la cama',['Dentro del armario','En el jardín']],['¿Por qué nadie reconocía a Mimí?','Porque estaba llena de barro',['Porque llevaba un sombrero','Porque estaba dormida']]]},
+ {t:'Excursión a la granja',e:'🐮',x:'La clase de primero fue de excursión a una granja. Vieron vacas, ovejas y un caballo muy alto. La granjera les enseñó a dar de comer a las gallinas. Después, cada niño se llevó a casa un huevo. Por la tarde volvieron al cole en autobús, cansados pero muy felices.',
+  q:[['¿Adónde fue la clase de excursión?','A una granja',['Al zoo','A la playa']],['¿Qué les enseñó la granjera?','A dar de comer a las gallinas',['A montar a caballo','A pintar ovejas']],['¿Qué se llevó cada niño a casa?','Un huevo',['Una pluma','Una flor']]]},
+ {t:'El paraguas de Leo',e:'☂️',x:'Leo tiene un paraguas amarillo. Cuando llueve, lo abre y salta en todos los charcos. Un día, el viento sopló tan fuerte que el paraguas salió volando. Leo corrió detrás de él por toda la calle. Al final, el paraguas se quedó enganchado en un árbol y un bombero lo bajó con una escalera.',
+  q:[['¿De qué color es el paraguas de Leo?','Amarillo',['Rojo','Azul']],['¿Qué pasó cuando sopló el viento?','El paraguas salió volando',['Leo se cayó','Empezó a nevar']],['¿Quién bajó el paraguas del árbol?','Un bombero',['Un policía','Su papá']]]},
+];
+const SPELL=[['paloma','🕊️',['palona','poloma']],['mariposa','🦋',['maripoza','marimosa']],['zapato','👟',['sapato','zapapo']],['jirafa','🦒',['girafa','jirrafa']],
+ ['elefante','🐘',['elefnate','elafante']],['pelota','⚽',['peltoa','pelotra']],['tortuga','🐢',['tortuja','torduga']],['ventana','🪟',['bentana','ventama']],
+ ['helado','🍦',['elado','heldao']],['galleta','🍪',['galeta','gayeta']],['caracol','🐌',['caracól','carakol']],['conejo','🐰',['coneho','cenejo']],
+ ['tomate','🍅',['tomete','tamote']],['estrella','⭐',['estreya','estrela']],['manzana','🍎',['mansana','manzama']],['pingüino','🐧',['pinguino','pingüíno']]];
+const SENT=['Mi mamá me mima.','El pato nada en el lago.','La luna sale de noche.','Me gusta leer cuentos.','Lola pinta una paloma.',
+ 'El sol calienta mucho.','Papá pela una manzana.','Mi perro come mucho.','La mula come paja.','Ulu tiene un cohete azul.'];
+const ELLA_FR=[['La','niña lee un cuento.'],['El','perro ladra mucho.'],['La','vaca da leche.'],['El','sol sale por la mañana.'],['La','mesa es de madera.'],
+ ['El','libro está en la mochila.'],['La','flor huele muy bien.'],['El','tren va muy rápido.'],['La','maestra explica la lección.'],['El','pez nada en el agua.'],
+ ['La','paloma come pan.'],['El','pulpo tiene ocho patas.']];
+
+function readStory(){const st=pick(STORIES);const box=`<div class="story"><p class="story-t">${st.e} ${st.t}</p><p>${st.x}</p></div>`;
+  return st.q.map(([qq,ok,bad],i)=>({q:qq,say:qq,v:box,o:shuffle([[ok,'ok'],...bad.map((b,k)=>[b,'x'+k])]).map(x=>({label:x[0],value:x[1]})),a:'ok',wide:true,
+    h:`Vuelve a leer el cuento. La respuesta es: <b>${ok}</b>.`,stat:['Lengua','Lectura','Mini-cuentos'],tag:'📖 Lengua · Mini-cuento',key:'st|'+st.t+'|'+i}));}
+const READ_GENS={
+  spell(){const [w,e,bad]=pick(SPELL);return{q:'¿Cuál está bien escrita?',say:'Mira el dibujo. ¿Cuál está bien escrita?',v:`<div class="big">${e}</div>`,
+    o:shuffle([[w,'ok'],...bad.map((b,k)=>[b,'x'+k])]).map(x=>({label:`<span class="lword">${x[0]}</span>`,value:x[1]})),a:'ok',h:`Se escribe <b>${w}</b>.`,stat:['Lengua','Lectura','Ortografía'],tag:'📖 Lengua · Ortografía'}},
+  order(){const s=pick(SENT);const words=s.replace('.','').split(' ');const fix=a=>{const t=a.join(' ').toLowerCase();return t[0].toUpperCase()+t.slice(1)+'.'};
+    const right=fix(words.map((w,i)=>i?w:w.toLowerCase()).map((w,i)=>i?w:w));const wrong=new Set();let g=0;
+    while(wrong.size<2&&g++<50){const m=fix(shuffle(words.map(w=>/^(Lola|Ulu|Papá)$/.test(w)?w:w.toLowerCase())));if(m.toLowerCase()!==s.toLowerCase())wrong.add(m.replace(/\b(lola|ulu|papá)\b/g,c=>c[0].toUpperCase()+c.slice(1)))}
+    return{q:'¿Qué frase está bien ordenada?',say:'Lee las frases. ¿Cuál está bien ordenada?',v:'',o:shuffle([[s,'ok'],...[...wrong].map((b,k)=>[b,'x'+k])]).map(x=>({label:x[0],value:x[1]})),a:'ok',wide:true,
+      h:`La frase bien ordenada es: <b>${s}</b>`,stat:['Lengua','Lectura','Ordena la frase'],tag:'📖 Lengua · Frases'}},
+  ellaFrase(){const [art,rest]=pick(ELLA_FR);return{q:'¿Qué palabra falta?',say:'Lee la frase. ¿Qué palabra falta, el o la?',v:`<div class="eq lword" style="font-size:30px"><b>___</b> ${rest}</div>`,
+    o:[['El','El'],['La','La']].map(x=>({label:`<span class="num">${x[0]}</span>`,value:x[1]})),a:art,h:`<b>${art} ${rest}</b>`,stat:['Lengua','Lectura','El / la en frases'],tag:'📖 Lengua · El / la'}},
+};
+function playReading(){const list=readStory().concat(['spell','order','spell','ellaFrase','order'].map(g=>{const q=READ_GENS[g]();q.key=q.key||g+'|'+q.q+'|'+q.v+'|'+strip(q.o.map(o=>o.label).join());return q}));
+  list.forEach(q=>q.lang='es');
+  startGame({kind:'list',list,from:'subject',label:'Lectura',lang:'es',bestKey:'l-lectura/*'});}
+
 /* ================= stats (for the parents' corner) and stars (for the sticker album) ================= */
 let stats=Object.assign({w:{},recent:[]},store.get('stats',{}));
 function statKey(a){return a.join(' · ')}
@@ -1036,7 +1087,10 @@ const LE_WORDS=[['mapa','🗺️','el',['ma','pa']],['lupa','🔍','la',['lu','p
   ['pato','🦆','el',['pa','to']],['mono','🐒','el',['mo','no']],['luna','🌙','la',['lu','na']],['gato','🐱','el',['ga','to']],['oso','🐻','el',['o','so']],
   ['uva','🍇','la',['u','va']],['cama','🛏️','la',['ca','ma']],['pera','🍐','la',['pe','ra']],['limón','🍋','el',['li','món']],['loro','🦜','el',['lo','ro']],
   ['lobo','🐺','el',['lo','bo']],['mamá','👩','la',['ma','má']],['papá','👨','el',['pa','pá']],['manzana','🍎','la',['man','za','na']],['moto','🏍️','la',['mo','to']],
-  ['mano','✋','la',['ma','no']],['pelota','⚽','la',['pe','lo','ta']],['amapola','🌺','la',['a','ma','po','la']],['perro','🐶','el',['pe','rro']],['pez','🐟','el',['pez']],['sol','☀️','el',['sol']]];
+  ['mano','✋','la',['ma','no']],['pelota','⚽','la',['pe','lo','ta']],['amapola','🌺','la',['a','ma','po','la']],['perro','🐶','el',['pe','rro']],['pez','🐟','el',['pez']],['sol','☀️','el',['sol']],
+  ['mariposa','🦋','la',['ma','ri','po','sa']],['tortuga','🐢','la',['tor','tu','ga']],['elefante','🐘','el',['e','le','fan','te']],['zapato','👟','el',['za','pa','to']],
+  ['tomate','🍅','el',['to','ma','te']],['conejo','🐰','el',['co','ne','jo']],['caracol','🐌','el',['ca','ra','col']],['jirafa','🦒','la',['ji','ra','fa']],
+  ['pingüino','🐧','el',['pin','güi','no']],['galleta','🍪','la',['ga','lle','ta']],['helado','🍦','el',['he','la','do']],['paraguas','☂️','el',['pa','ra','guas']]];
 const LEVOC=LE_WORDS.map(([w,e,art,syl])=>({w,pic:e,art,syl,cat:'mpl'.includes(w[0])?w[0]:'x',s:`${art} ${w}`,ses:syl.join(' - ')}));
 
 /* ---------- a "pack" = language + words + texts, so the same games work for English and Lengua ---------- */
@@ -1266,6 +1320,7 @@ $('subjAll').addEventListener('click',playSubject);
 $('gamesBtn').addEventListener('click',()=>playGames(curSubj.lang==='en'?'en':'es'));
 $('sayBtn').addEventListener('click',playSay);
 $('opsBtn').addEventListener('click',playOps);
+$('readBtn').addEventListener('click',playReading);
 $('albumcard').addEventListener('click',renderAlbum);
 $('openparent').addEventListener('click',openParent);
 $('pclose').addEventListener('click',()=>{$('parent').hidden=true});
@@ -1278,7 +1333,7 @@ $('opts').addEventListener('click',e=>{const b=e.target.closest('.opt');if(b&&!b
 $('next').addEventListener('click',next);
 $('back').addEventListener('click',leave);
 $('leave').addEventListener('click',leave);
-$('again').addEventListener('click',()=>{if(ctx.kind==='arcade')return playGames(ctx.lang);if(ctx.kind==='say')return playSay();if(ctx.kind==='fails')playFails();else if(ctx.kind==='redo')startGame(ctx.parent);else startGame(ctx)});
+$('again').addEventListener('click',()=>{if(ctx.kind==='arcade')return playGames(ctx.lang);if(ctx.kind==='list')return playReading();if(ctx.kind==='say')return playSay();if(ctx.kind==='fails')playFails();else if(ctx.kind==='redo')startGame(ctx.parent);else startGame(ctx)});
 $('redo').addEventListener('click',()=>startGame({kind:'redo',list:roundFails.slice(),from:ctx.from,label:ctx.lang==='en'?'Missed':'Falladas',lang:ctx.lang,parent:ctx.kind==='redo'?ctx.parent:ctx}));
 $('voice').addEventListener('click',()=>{if(cur)speak([[cur.say,cur.lang]],true)});
 $('tr').addEventListener('click',()=>{if(!cur||!cur.es)return;$('qes').hidden=false;speak(cur.es.split(/([A-Z]{2,}(?: [A-Z]{2,})*)/).map((t,i)=>[i%2?t.toLowerCase():t,i%2?'en':'es']).filter(x=>x[0].trim()),true)});
