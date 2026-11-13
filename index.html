@@ -251,7 +251,23 @@ h2.sec small{font:500 15px var(--body);color:var(--muted)}
       <button class="tog" id="tvoice" type="button" role="switch" aria-labelledby="lv"></button></div>
     <div class="set"><div><label id="ls">🎵 Sonidos</label><small>Pitidos de acierto y fallo</small></div>
       <button class="tog" id="tsound" type="button" role="switch" aria-labelledby="ls"></button></div>
+    <div class="set"><div><label>💬 Sugerencias o errores</label><small>¿Algo falla o quieres que añadamos algo?</small></div>
+      <button class="btn" id="openfb" type="button" style="padding:8px 14px;font-size:17px">Escribir</button></div>
     <div class="endbtns"><button class="btn yellow" type="submit">Guardar</button></div>
+  </form>
+</div>
+
+<div class="dlg" id="feedback" hidden role="dialog" aria-modal="true" aria-labelledby="fbtitle">
+  <form class="sticker" id="fform">
+    <h2 id="fbtitle">💬 Sugerencias o errores</h2>
+    <p style="margin:0 0 12px;color:var(--muted);font-size:16px">Cuéntanos si algo falla o qué te gustaría añadir (temas, palabras, juegos…). Llega directamente a quien hace la app.</p>
+    <label for="fmsg" style="font:600 18px var(--display)">Mensaje</label>
+    <textarea class="field" id="fmsg" rows="5" required maxlength="2000" style="font:400 18px var(--body);resize:vertical"></textarea>
+    <label for="ffrom" style="font:600 18px var(--display)">Tu nombre o email <span style="font-weight:400;color:var(--muted)">(opcional, por si te respondemos)</span></label>
+    <input class="field" id="ffrom" autocomplete="off" maxlength="80">
+    <input type="checkbox" id="fbot" tabindex="-1" autocomplete="off" style="display:none" aria-hidden="true">
+    <p id="fstatus" aria-live="polite" style="min-height:24px;margin:0;font:600 17px var(--display)"></p>
+    <div class="endbtns"><button class="btn" type="button" id="fcancel">Cerrar</button><button class="btn yellow" type="submit" id="fsend">Enviar</button></div>
   </form>
 </div>
 
@@ -639,9 +655,31 @@ $('sform').addEventListener('submit',e=>{e.preventDefault();
   store.set('cfg',cfg);$('settings').hidden=true;if(!cfg.voice)try{speechSynthesis.cancel()}catch(e){}
   if(screen==='subject')renderSubject(curSubj.id);else if(screen==='home')renderHome();});
 $('settings').addEventListener('click',e=>{if(e.target===$('settings'))$('settings').hidden=true});
-document.addEventListener('keydown',e=>{if(e.key==='Escape')$('settings').hidden=true});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){$('settings').hidden=true;$('feedback').hidden=true}});
 $('gear').addEventListener('click',openSettings);$('gear2').addEventListener('click',openSettings);
 $('wform').addEventListener('submit',e=>{e.preventDefault();cfg.name=$('wname').value.trim();cfg.welcomed=true;store.set('cfg',cfg);renderHome();});
+
+/* ================= feedback (Web3Forms: emails the owner; the key only allows sending to her, never reveals her address) ================= */
+const W3F_KEY='24ac0b1f-faa1-4d07-85b4-de4e988548fe';
+const PUBLIC_URL='https://leyreph.github.io/a-repasar-1-primaria/';
+function openFeedback(){$('settings').hidden=true;$('fstatus').textContent='';$('fstatus').style.color='';$('fsend').disabled=false;$('feedback').hidden=false;$('fmsg').focus();}
+$('openfb').addEventListener('click',openFeedback);
+$('fcancel').addEventListener('click',()=>{$('feedback').hidden=true});
+$('feedback').addEventListener('click',e=>{if(e.target===$('feedback'))$('feedback').hidden=true});
+$('fform').addEventListener('submit',async e=>{e.preventDefault();
+  const msg=$('fmsg').value.trim();if(!msg)return;
+  if($('fbot').checked)return; // bots tick hidden boxes
+  $('fsend').disabled=true;$('fstatus').style.color='var(--muted)';$('fstatus').textContent='Enviando…';
+  const body={access_key:W3F_KEY,subject:'¡A repasar! · Sugerencias o errores',from_name:$('ffrom').value.trim()||'Anónimo',
+    message:msg,contacto:$('ffrom').value.trim()||'—',perfil:NAME()||'—',pantalla:screen,navegador:navigator.userAgent,botcheck:false};
+  try{const res=await fetch('https://api.web3forms.com/submit',{method:'POST',headers:{'Content-Type':'application/json',Accept:'application/json'},body:JSON.stringify(body)});
+    const j=await res.json().catch(()=>({}));
+    if(res.ok&&j.success!==false){$('fstatus').style.color='var(--leaf)';$('fstatus').textContent='¡Enviado! Muchas gracias 💛';$('fmsg').value='';$('ffrom').value='';setTimeout(()=>{$('feedback').hidden=true},1800);}
+    else throw new Error(j.message||res.status);
+  }catch(err){$('fsend').disabled=false;$('fstatus').style.color='var(--red)';
+    $('fstatus').innerHTML=location.hostname.endsWith('github.io')?'No se ha podido enviar. Revisa la conexión y prueba otra vez.'
+      :`Desde aquí no se puede enviar. Ábrelo en <a href="${PUBLIC_URL}">${PUBLIC_URL.replace('https://','')}</a>`;}
+});
 
 /* ================= confetti ================= */
 function confetti(){
