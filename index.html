@@ -494,6 +494,10 @@ const V={
   body:[['eyes','👀','ojos'],['mouth','👄','boca'],['nose','👃','nariz'],['ears','👂','orejas'],['hands','🙌','manos'],['legs','🦵','piernas']],
   emotions:[['happy','😀','contento'],['sad','😢','triste'],['angry','😠','enfadado'],['surprised','😮','sorprendido'],['excited','🤩','emocionado'],['silly','🤪','tontorrón']],
 };
+function sylCountQ(w,e,sy){const n=sy.length;
+  return{q:`¿Cuántas sílabas tiene? Da palmadas 👏`,say:`${w}. Da una palmada por cada sílaba. ¿Cuántas sílabas tiene ${w}?`,v:`<div class="big">${e}</div><p class="lword">${w}</p>`,
+    o:[1,2,3,4].map(x=>({label:`<span class="num">${x}</span>`,value:x})),a:n,
+    h:`<b>${sy.join(' · ')}</b> → ${'👏'.repeat(n)} ${n} ${n===1?'sílaba':'sílabas'}.`}}
 const E=(q,say,v,o,a,h,extra)=>Object.assign({q,say,lang:'en',v,o,a,h},extra||{});
 
 /* ================= generators ================= */
@@ -565,14 +569,30 @@ const G={
       v:`<div class="eq" style="font-size:80px"><b>${up?v.toUpperCase():v}</b></div>`,
       o:shuffle([v,...shuffle(V5.filter(x=>x!==v)).slice(0,2)]).map(x=>({label:`<span class="num">${up?x:x.toUpperCase()}</span>`,value:x})),
       a:v,h:`${v.toUpperCase()} mayúscula y ${v} minúscula son la misma letra.`}},
-  leSilabas(){const W=[['pez','🐟',1],['sol','☀️',1],['pan','🍞',1],['tren','🚂',1],['flor','🌸',1],
-      ['gato','🐱',2],['pato','🦆',2],['mono','🐒',2],['cama','🛏️',2],['vaca','🐮',2],['casa','🏠',2],['luna','🌙',2],['pera','🍐',2],['oso','🐻',2],['uva','🍇',2],
-      ['pelota','⚽',3],['zapato','👟',3],['paloma','🕊️',3],['tomate','🍅',3],['conejo','🐰',3],['plátano','🍌',3],
-      ['mariposa','🦋',4],['elefante','🐘',4],['bicicleta','🚲',4],['cocodrilo','🐊',4]];
-    const [w,e,n]=pick(W);
-    return{q:`¿Cuántas sílabas tiene? Da palmadas 👏`,say:`${w}. Da una palmada por cada sílaba. ¿Cuántas sílabas tiene ${w}?`,v:`<div class="big">${e}</div><p class="lword">${w}</p>`,
-      o:[1,2,3,4].map(x=>({label:`<span class="num">${x}</span>`,value:x})),a:n,h:`${w}: ${n} ${n===1?'palmada':'palmadas'} → ${n} ${n===1?'sílaba':'sílabas'}.`}},
-
+  leSilabas(){const W=['pez','sol','pan','tren','flor','ga-to','pa-to','mo-no','ca-ma','va-ca','ca-sa','lu-na','pe-ra','o-so','u-va',
+      'pe-lo-ta','za-pa-to','pa-lo-ma','to-ma-te','co-ne-jo','plá-ta-no','ma-ri-po-sa','e-le-fan-te','bi-ci-cle-ta','co-co-dri-lo'];
+    const EM={pez:'🐟',sol:'☀️',pan:'🍞',tren:'🚂',flor:'🌸',gato:'🐱',pato:'🦆',mono:'🐒',cama:'🛏️',vaca:'🐮',casa:'🏠',luna:'🌙',pera:'🍐',oso:'🐻',uva:'🍇',
+      pelota:'⚽',zapato:'👟',paloma:'🕊️',tomate:'🍅',conejo:'🐰','plátano':'🍌',mariposa:'🦋',elefante:'🐘',bicicleta:'🚲',cocodrilo:'🐊'};
+    const sy=pick(W).split('-');return sylCountQ(sy.join(''),EM[sy.join('')],sy);},
+  /* Unidad 2: count syllables with the unit's words (m, p, l) */
+  leSilabas2(){const W=['pie','miel','sol','pez','ma-pa','lu-pa','pi-la','pu-ma','pul-po','o-la','pa-to','mo-no','lu-na','ma-má','pa-pá','li-món','lo-ro','ma-no',
+      'pa-lo-ma','pe-lo-ta','to-ma-te','man-za-na','a-ma-po-la','ma-ri-po-sa','pa-ra-guas','he-la-do'];
+    const EM={pie:'🦶',miel:'🍯',sol:'☀️',pez:'🐟',mapa:'🗺️',lupa:'🔍',pila:'🔋',puma:'🐆',pulpo:'🐙',ola:'🌊',pato:'🦆',mono:'🐒',luna:'🌙','mamá':'👩','papá':'👨','limón':'🍋',loro:'🦜',mano:'✋',
+      paloma:'🕊️',pelota:'⚽',tomate:'🍅',manzana:'🍎',amapola:'🌺',mariposa:'🦋',paraguas:'☂️',helado:'🍦'};
+    const sy=pick(W).split('-');return sylCountQ(sy.join(''),EM[sy.join('')],sy);},
+  /* choose the word split correctly into syllables */
+  leSepara(){const W=['ma-pa','lu-pa','pi-la','pu-ma','pul-po','pa-lo-ma','pe-lo-ta','to-ma-te','a-ma-po-la','ma-ri-po-sa','li-món','man-za-na','pa-ra-guas','he-la-do','lo-ro','mo-no','lu-na','pa-to'];
+    const EM={mapa:'🗺️',lupa:'🔍',pila:'🔋',puma:'🐆',pulpo:'🐙',paloma:'🕊️',pelota:'⚽',tomate:'🍅',amapola:'🌺',mariposa:'🦋','limón':'🍋',manzana:'🍎',paraguas:'☂️',helado:'🍦',loro:'🦜',mono:'🐒',luna:'🌙',pato:'🦆'};
+    const right=pick(W);const w=right.replace(/-/g,'');const cuts=[];let k=0;right.split('-').slice(0,-1).forEach(x=>{k+=x.length;cuts.push(k)});
+    const mk=c=>{let o='',p=0;c.forEach(x=>{o+=w.slice(p,x)+'-';p=x});return o+w.slice(p)};
+    const wrong=new Set();let g=0;
+    while(wrong.size<2&&g++<80){const c=cuts.slice();const i=R(0,c.length-1);c[i]+=pick([-1,1]);
+      if(Math.random()<.3&&c.length>1)c.splice(R(0,c.length-1),1);
+      if(c.some((x,j)=>x<=0||x>=w.length||(j&&x<=c[j-1])))continue;const m=mk(c);if(m!==right)wrong.add(m)}
+    if(wrong.size<2)wrong.add(w);
+    return{q:'¿Cómo se separa en sílabas?',say:`${w}. ¿Cómo se separa ${w} en sílabas? Da palmadas.`,v:`<div class="big">${EM[w]}</div>`,
+      o:shuffle([[right,'ok'],...[...wrong].slice(0,2).map((x,i)=>[x,'x'+i])]).map(x=>({label:`<span class="lword" style="font-size:28px">${x[0].replace(/-/g,' - ')}</span>`,value:x[1]})),a:'ok',wide:true,
+      h:`Da una palmada en cada trozo: <b>${right.replace(/-/g,' · ')}</b>.`}},
   /* Unidad 2 · p, m, l · el / la */
   leElLa(){const W=[['el','pato','🦆'],['la','luna','🌙'],['el','sol','☀️'],['la','casa','🏠'],['el','perro','🐶'],['la','vaca','🐮'],['el','gato','🐱'],
       ['la','pelota','⚽'],['el','lápiz','✏️'],['la','flor','🌸'],['el','árbol','🌳'],['la','estrella','⭐'],['el','pez','🐟'],['la','oveja','🐑'],['el','oso','🐻'],
@@ -677,7 +697,8 @@ const SUBJECTS=[
     {id:'l-u2',nm:'Unidad 2',sb:'P, M, L · el y la',worlds:[
       {id:'ella',nm:'¿El o la?',sb:'el pato, la luna…',ico:'👫',c:'#ef6aa6',gens:['leElLa']},
       {id:'letras',nm:'M, P y L',sb:'¿Con qué letra empieza?',ico:'🔠',c:'#2f63d6',gens:['lePrimeraLetra']},
-      {id:'silabas',nm:'Sílabas',sb:'ma, pe, li, lo…',ico:'🧩',c:'#ffc83d',gens:['leCompletaSil']},
+      {id:'contar',nm:'Cuenta sílabas',sb:'Palmadas: pa · lo · ma',ico:'👏',c:'#e8483a',gens:['leSilabas2','leSilabas2','leSepara']},
+      {id:'silabas',nm:'Completa la sílaba',sb:'ma, pe, li, lo…',ico:'🧩',c:'#ffc83d',gens:['leCompletaSil']},
       {id:'leer',nm:'Leo palabras',sb:'mapa, lupa, paloma…',ico:'📖',c:'#34ad62',gens:['leLeePalabra','leEligePalabra']},
     ]},
   ]},
