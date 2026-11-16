@@ -242,6 +242,8 @@ body.hasnav .wrap{padding-top:calc(76px + env(safe-area-inset-top,0px))}
 .albumgrid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px;padding:16px}
 .stk{aspect-ratio:1/1;display:grid;place-items:center;font-size:38px;border-radius:16px;border:2.5px dashed #c3cbe0;color:#c3cbe0;font-family:var(--display);font-weight:700}
 .stk.got{border:3px solid var(--ink);background:#fff7d6;box-shadow:0 3px 0 var(--ink);color:inherit}
+.albumdone{margin:0 0 14px;padding:10px 14px;font:600 18px var(--display);background:#fff7d6}
+.albumdone span{font-size:26px;letter-spacing:4px;margin-left:6px}
 .albumnext{text-align:center;color:var(--muted);margin-top:14px}
 .newsticker{margin:-8px 0 18px;font:700 20px var(--display);color:var(--pink)}
 .newsticker span{display:block;font-size:54px;margin-top:4px}
@@ -349,7 +351,8 @@ body.hasnav .wrap{padding-top:calc(76px + env(safe-area-inset-top,0px))}
   </section>
 
   <section id="album" hidden>
-    <header class="top"><div class="badge" aria-hidden="true" style="--c:var(--pink)">📒</div><div class="who"><p class="eyebrow" id="albumcount"></p><h1>Mi álbum</h1></div></header>
+    <header class="top"><div class="badge" aria-hidden="true" style="--c:var(--pink)">📒</div><div class="who"><p class="eyebrow" id="albumcount"></p><h1 id="albumtitle">Mi álbum</h1></div></header>
+    <p class="albumdone sticker" id="albumdone" hidden></p>
     <div class="albumgrid sticker" id="albumgrid"></div>
     <p class="albumnext" id="albumnext"></p>
   </section>
@@ -1039,20 +1042,36 @@ function logQ(q,ok,chosen){if(!q.stat)return;const k=statKey(q.stat);const e=sta
 function logGame(name,st,total){const subj=PK.lang==='en'?'English':'Lengua';const k=statKey([subj,'Juegos',strip(name)]);
   const e=stats.w[k]||(stats.w[k]={s:subj,n:0,ok:0,last:0});e.n+=total;e.ok+=Math.min(st,total);e.last=Date.now();store.set('stats',stats);}
 
-const STICKERS=['🦄','🐬','🦋','🐢','🦊','🐼','🐨','🦁','🐙','🦖','🐳','🦜','🐞','🌈','🚀','🍦','🎠','🏰','🧁','🍓','⚽','🎸','🌻','🐝','🦒','🐧','🐠','🦉','🌙','🍉','🎈','🧸','🚂','🦕','🐸','🐰','🐱','🐶','🐹','🐯'];
-const PER_STICKER=10;
+/* sticker albums: 40 stickers each, a new theme every album; each album asks for a few more stars per sticker */
+const ALBUMS=[
+ {nm:'Animales y más',ico:'🦄',st:['🦄','🐬','🦋','🐢','🦊','🐼','🐨','🦁','🐙','🦖','🐳','🦜','🐞','🌈','🚀','🍦','🎠','🏰','🧁','🍓','⚽','🎸','🌻','🐝','🦒','🐧','🐠','🦉','🌙','🍉','🎈','🧸','🚂','🦕','🐸','🐰','🐱','🐶','🐹','🐯']},
+ {nm:'El mar',ico:'🐠',st:['🐠','🐟','🐡','🦈','🐬','🐳','🐋','🦭','🐙','🦑','🦀','🦞','🦐','🐚','🐢','🏝️','⛵','🚤','🌊','🐧','🦩','🦢','🦆','⚓','🛟','🏖️','🌅','🦦','🎣','🐌','🌴','☀️','🍉','🕶️','🏄','🐊','🪸','🦪','🧜‍♀️','🐸']},
+ {nm:'Espacio y magia',ico:'🚀',st:['🚀','🛸','🌍','🌙','⭐','🌟','☄️','🪐','👽','🤖','🌈','🦄','🧚','🧙','🐉','🏰','👑','💎','🔮','✨','🎩','🪄','🧞','🌌','🔭','🌠','⚡','🌞','🎆','🎇','🧸','🎈','🎁','🎀','🎠','🎡','🎢','🎪','🎨','🎭']},
+ {nm:'Comida rica',ico:'🍓',st:['🍎','🍌','🍇','🍓','🍉','🍒','🍑','🍍','🥝','🍐','🍋','🥕','🌽','🍅','🥑','🍕','🍔','🌭','🍟','🍿','🧁','🍰','🎂','🍩','🍪','🍫','🍬','🍭','🍦','🍨','🥞','🧇','🥐','🥨','🧀','🥚','🥛','🍯','🍝','🍣']},
+];
+const PER_ALBUM=40;
+const perSticker=n=>Math.min(25,10+5*n);           /* album 1: 10 stars, 2: 15, 3: 20, then 25 */
 let starTotal=store.get('stars',0);
-const stickersOwned=()=>Math.min(STICKERS.length,Math.floor(starTotal/PER_STICKER));
-function addStars(n){const before=stickersOwned();starTotal+=n;store.set('stars',starTotal);const after=stickersOwned();
-  const box=$('newsticker');if(after>before){box.hidden=false;box.innerHTML=`🎁 ¡Pegatina nueva para tu álbum! <span>${STICKERS.slice(before,after).join(' ')}</span>`;}
-  else{box.hidden=false;const left=PER_STICKER-(starTotal%PER_STICKER);box.innerHTML=after>=STICKERS.length?'📒 ¡Álbum completo!':`⭐ Te ${left===1?'falta 1 estrella':'faltan '+left+' estrellas'} para la próxima pegatina`;box.classList.add('soft')}
-  if(after>before)box.classList.remove('soft');}
-function renderAlbum(){const own=stickersOwned();
-  $('albumcount').textContent=`${own} de ${STICKERS.length} pegatinas · ⭐ ${starTotal} estrellas`;
-  $('albumgrid').innerHTML=STICKERS.map((e,i)=>`<div class="stk${i<own?' got':''}">${i<own?e:'?'}</div>`).join('');
-  const left=PER_STICKER-(starTotal%PER_STICKER);$('albumnext').textContent=own>=STICKERS.length?'¡Las tienes todas! 🎉':`Consigue ${left} ${left===1?'estrella más':'estrellas más'} para la siguiente pegatina.`;
+function albumState(stars=starTotal){let n=0,left=stars;
+  while(left>=PER_ALBUM*perSticker(n)){left-=PER_ALBUM*perSticker(n);n++}
+  const per=perSticker(n),own=Math.floor(left/per);
+  return{done:n,cur:n,album:ALBUMS[n%ALBUMS.length],own,per,need:per-(left%per),total:n*PER_ALBUM+own};}
+const stickersOwned=()=>albumState().total;
+function addStars(n){const b=albumState();starTotal+=n;store.set('stars',starTotal);const a=albumState();
+  const box=$('newsticker');box.hidden=false;box.classList.remove('soft');
+  if(a.done>b.done){box.innerHTML=`🏆 ¡Álbum ${b.cur+1} completo! Empiezas el álbum ${a.cur+1}: ${a.album.nm} <span>${a.album.ico}</span>`;}
+  else if(a.own>b.own){box.innerHTML=`🎁 ¡Pegatina nueva para tu álbum! <span>${a.album.st.slice(b.own,a.own).join(' ')}</span>`;}
+  else{box.classList.add('soft');box.innerHTML=`⭐ Te ${a.need===1?'falta 1 estrella':'faltan '+a.need+' estrellas'} para la próxima pegatina`;}}
+function renderAlbum(){const a=albumState();
+  $('albumtitle').textContent=`Álbum ${a.cur+1} · ${a.album.nm}`;
+  $('albumcount').textContent=`${a.own} de ${PER_ALBUM} pegatinas · ⭐ ${starTotal} estrellas`;
+  $('albumdone').hidden=!a.done;
+  $('albumdone').innerHTML=a.done?`🏆 Álbumes completados: <b>${a.done}</b> <span>${Array.from({length:a.done},(_,i)=>ALBUMS[i%ALBUMS.length].ico).join(' ')}</span>`:'';
+  $('albumgrid').innerHTML=a.album.st.map((e,i)=>`<div class="stk${i<a.own?' got':''}">${i<a.own?e:'?'}</div>`).join('');
+  $('albumnext').textContent=`Consigue ${a.need} ${a.need===1?'estrella más':'estrellas más'} para la siguiente pegatina (cada pegatina de este álbum: ${a.per} ⭐).`;
   show('album');}
-function renderAlbumCard(){const own=stickersOwned();$('albumcard').innerHTML=`<span aria-hidden="true">📒</span><div><div>Mi álbum de pegatinas</div><small>${own} de ${STICKERS.length} · ${STICKERS.slice(Math.max(0,own-5),own).join(' ')||'¡Gana estrellas para conseguir pegatinas!'}</small></div>`}
+function renderAlbumCard(){const a=albumState();
+  $('albumcard').innerHTML=`<span aria-hidden="true">📒</span><div><div>Mi álbum ${a.cur+1} · ${a.album.nm}${a.done?` · 🏆×${a.done}`:''}</div><small>${a.own} de ${PER_ALBUM} · ${a.album.st.slice(Math.max(0,a.own-5),a.own).join(' ')||'¡Gana estrellas para conseguir pegatinas!'}</small></div>`}
 
 /* ---- parents' corner ---- */
 const GATE=[[6,7],[7,8],[8,9],[6,8],[7,9],[9,6]];let gateQ=null;
