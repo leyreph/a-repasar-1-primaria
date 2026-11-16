@@ -661,6 +661,20 @@ const G={
     return E(`Teacher says: <em>${ans[0].toUpperCase()}!</em>`,`Teacher says: ${ans[0]}!`,'',set.map(a=>({label:emo(a[1]),value:a[0]})),ans[0],`<b>${ans[0][0].toUpperCase()+ans[0].slice(1)}</b> ${ans[1]}`,{es:`La profe dice: ¡${ans[0].toUpperCase()}! Toca el dibujo.`})},
   direction(){const {ans,set}=choose(V.dirs,4);
     return E(`Go <em>${ans[0].toUpperCase()}</em>!`,`Go ${ans[0]}!`,'',set.map(a=>({label:emo(a[1]),value:a[0]})),ans[0],`<b>${ans[0][0].toUpperCase()+ans[0].slice(1)}</b> ${ans[1]}`,{es:`¡Ve hacia ${ans[0].toUpperCase()}! Toca la flecha.`})},
+  /* ---------- days of the week: spelling (Academy, 16 Nov) ---------- */
+  daySpell(){const BAD={Monday:['Munday','Mondey'],Tuesday:['Tusday','Chusday'],Wednesday:['Wensday','Wednsday'],Thursday:['Thursdey','Thrusday'],
+      Friday:['Fraiday','Fridey'],Saturday:['Saterday','Saturdey'],Sunday:['Sanday','Sundey']};
+    const i=R(0,6),d=V.days[i];
+    return E('Which one is spelt right?',`Which one is spelt right? ${d}.`,`<div class="eq lword" style="font-size:30px">📅 ${V.daysEs[i]}</div>`,
+      shuffle([[d,'ok'],...BAD[d].map((b,k)=>[b,'x'+k])]).map(x=>({label:`<span class="lword" style="font-size:26px">${x[0]}</span>`,value:x[1]})),'ok',
+      `${V.daysEs[i][0].toUpperCase()+V.daysEs[i].slice(1)} is <b>${d}</b>: ${d.toUpperCase().split('').join(' - ')}`,{es:`¿Cuál está bien escrito? (${V.daysEs[i]})`})},
+  dayLetter(){const i=R(0,6),d=V.days[i];const k=R(1,d.length-4);const c=d[k];
+    const pool='aeiouydnrst'.split('').filter(x=>x!==c);const opts=shuffle([c,...shuffle(pool).slice(0,2)]);
+    return E('Which letter is missing?',`Which letter is missing? ${d}.`,`<div class="eq lword" style="font-size:40px">${d.slice(0,k)}<b>_</b>${d.slice(k+1)}</div>`,
+      opts.map(x=>({label:`<span class="num">${x}</span>`,value:x})),c,`It's <b>${d}</b>: ${d.slice(0,k)}<b>${c}</b>${d.slice(k+1)}`,{es:`¿Qué letra falta en ${d} (${V.daysEs[i]})?`})},
+  dayNext(){const i=R(0,6),j=(i+1)%7,ans=V.days[j];const s=new Set([ans]);while(s.size<3)s.add(pick(V.days.filter(d=>d!==V.days[i])));
+    return E(`What day comes after <em>${V.days[i]}</em>?`,`What day comes after ${V.days[i]}?`,'',shuffle([...s]).map(d=>({label:d,value:d})),ans,
+      `${V.days[i]} → <b>${ans}</b>`,{es:`¿Qué día va después de ${V.days[i]} (${V.daysEs[i]})?`})},
   hallWord(){const {ans,set}=choose(V.halloween);
     return E('Who is it?','Who is it?',bigv(ans[1]),set.map(a=>({label:a[0],value:a[0]})),ans[0],`It's a <b>${ans[0]}</b> ${ans[1]}.`,{es:'¿Quién es?'})},
   hallTouch(){const {ans,set}=choose(V.halloween,4);
@@ -717,6 +731,7 @@ const SUBJECTS=[
     ]},
     {id:'ia-feelings',src:'academia',nm:'Feelings',sb:'Academy · November',worlds:[
       {id:'emotions',nm:'Emotions',sb:'Happy, sad, silly…',ico:'😀',c:'#ffc83d',gens:['emoWord','emoTouch','emoTouch']},
+      {id:'weekdays',nm:'Days of the week',sb:'Spell Monday… Sunday',ico:'📅',c:'#7a5cf0',gens:['daySpell','daySpell','dayLetter','dayNext']},
       {id:'lava',nm:'The Floor Is Lava',sb:'Jump, up, down…',ico:'🌋',c:'#e8483a',gens:['teacherSays','direction','direction']},
       {id:'colours2',nm:'Colours',sb:'Colours again!',ico:'🖍️',c:'#2f63d6',gens:['colourName','touchColour']},
     ]},
