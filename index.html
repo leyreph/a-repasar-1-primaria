@@ -296,6 +296,8 @@ body.hasnav .wrap{padding-top:calc(76px + env(safe-area-inset-top,0px))}
 .wbest{font:600 14px var(--display);white-space:nowrap}
 .wall{flex:none;padding:7px 12px;font:700 15px var(--display);white-space:nowrap;background:#fff7d6;border:2.5px solid var(--ink);border-radius:999px;box-shadow:0 3px 0 var(--ink)}
 .wall span{font-weight:600}
+.plink{display:block;margin:0 0 14px;padding:10px 14px;border:2.5px solid var(--ink);border-radius:14px;background:var(--o2);box-shadow:0 3px 0 var(--ink);color:var(--ink);text-decoration:none;font:700 18px var(--display)}
+.plink small{display:block;font:400 13px var(--body);color:var(--muted)}
 #confetti{position:fixed;inset:0;pointer-events:none;z-index:40}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style>
@@ -1549,7 +1551,8 @@ function openParent(){$('settings').hidden=true;gateQ=pick(GATE);$('pgateq').tex
 function renderParent(){$('pgate').hidden=true;$('pbody').hidden=false;
   const ws=Object.entries(stats.w);const tot=ws.reduce((a,[k,e])=>a+e.n,0),ok=ws.reduce((a,[k,e])=>a+e.ok,0);
   const who=NAME()||'la peque';
-  let h=`<div class="psum"><div><b>${tot}</b><small>preguntas</small></div><div><b>${tot?Math.round(ok*100/tot):0}%</b><small>a la primera</small></div><div><b>${starTotal}</b><small>estrellas</small></div><div><b>${stickersOwned()}</b><small>pegatinas</small></div></div>`;
+  let h=`<a class="plink" href="https://av.santillana.es/av/my-books" target="_blank" rel="noopener">📚 Libros digitales de Santillana<small>av.santillana.es/av/my-books</small></a>`;
+  h+=`<div class="psum"><div><b>${tot}</b><small>preguntas</small></div><div><b>${tot?Math.round(ok*100/tot):0}%</b><small>a la primera</small></div><div><b>${starTotal}</b><small>estrellas</small></div><div><b>${stickersOwned()}</b><small>pegatinas</small></div></div>`;
   if(!tot)h+=`<p class="pempty">Todavía no hay datos. Cuando ${who} juegue, aquí verás qué le cuesta más.</p>`;
   else{
     const rows=ws.filter(([k,e])=>e.n>=3).map(([k,e])=>({k,e,p:Math.round(e.ok*100/e.n)})).sort((a,b)=>a.p-b.p);
