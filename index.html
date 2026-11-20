@@ -266,6 +266,12 @@ body.hasnav .wrap{padding-top:calc(76px + env(safe-area-inset-top,0px))}
 .story{width:100%;text-align:left;font:500 clamp(18px,4.4vw,21px)/1.6 var(--body);background:#fffbea;border:2.5px dashed #e0b84a;border-radius:16px;padding:12px 16px;margin-bottom:4px}
 .story p{margin:0}.story .story-t{font:700 20px var(--display);margin-bottom:6px;color:var(--blue)}
 .opt{text-wrap:balance}
+.toyv{position:relative;display:inline-block;font-size:64px;line-height:1}
+.toyv i{position:absolute;right:-.35em;top:-.25em;font-size:.45em;font-style:normal}
+.toyv.old{filter:grayscale(.85) sepia(.5) brightness(.85)}.toyv.old i{filter:none}
+.big .toyv{font-size:96px}
+.toyc{display:inline-grid;place-items:center;width:84px;height:84px;border-radius:50%;font-size:50px;border:3px solid var(--ink)}
+.toyc.sm{width:30px;height:30px;font-size:18px;border-width:2px;vertical-align:middle}
 #confetti{position:fixed;inset:0;pointer-events:none;z-index:40}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style>
@@ -501,6 +507,10 @@ const V={
     ['chair','🪑','silla','Esta es mi silla.'],['table',TABLE_SVG,'mesa','Esta es mi mesa.'],['ruler','📏','regla','Esta es mi regla.'],
     ['scissors','✂️','tijeras','Estas son mis tijeras.'],['bag','🎒','mochila','Esta es mi mochila.'],['pen','🖊️','bolígrafo','Este es mi bolígrafo.'],
     ['door','🚪','puerta','Esta es la puerta.'],['window','🪟','ventana','Esta es la ventana.']],
+  /* School (cole) · Toys: toys, big/small, new/old, colours */
+  toys:[['ball','⚽','pelota','Tengo una pelota.'],['teddy','🧸','osito','Tengo un osito.'],['car','🚗','coche','Tengo un coche.'],['kite','🪁','cometa','Tengo una cometa.'],
+    ['robot','🤖','robot','Tengo un robot.'],['train','🚂','tren','Tengo un tren.'],['plane','✈️','avión','Tengo un avión.'],['boat','⛵','barco','Tengo un barco.'],
+    ['yo-yo','🪀','yoyó','Tengo un yoyó.'],['puzzle','🧩','puzle','Tengo un puzle.'],['bike','🚲','bici','Tengo una bici.'],['drum','🥁','tambor','Tengo un tambor.'],['balloon','🎈','globo','Tengo un globo.']],
   emotions:[['happy','😀','contento'],['sad','😢','triste'],['angry','😠','enfadado'],['surprised','😮','sorprendido'],['excited','🤩','emocionado'],['silly','🤪','tontorrón']],
 };
 function sylCountQ(w,e,sy){const n=sy.length;
@@ -691,6 +701,26 @@ const G={
     return E(`Touch the <em>${ans[0].toUpperCase()}</em>.`,`Touch the ${ans[0]}.`,'',set.map(a=>({label:emo(a[1]),value:a[0]})),ans[0],`This is the <b>${ans[0]}</b> ${ans[1]}.`,{es:`Toca: ${ans[0].toUpperCase()}.`})},
   schoolCount(){const it=pick(V.school.filter(x=>['pencil','crayon','book','chair','ruler','pen'].includes(x[0])));const n=R(2,9);
     return E(`How many ${it[0]}s?`,`How many ${it[0]}s?`,items(it[1],n),numOpts(n,1,10),n,`Let's count: ${V.numbers.slice(1,n+1).join(', ')}! <b>${V.numbers[n]} ${it[0]}s</b>.`,{es:`¿Cuántos hay? (${it[2]})`})},
+  /* ---------- School · Toys ---------- */
+  toyWhat(){const {ans,set}=choose(V.toys);
+    return E("What's this?","What's this?",bigv(ans[1]),set.map(a=>({label:a[0],value:a[0]})),ans[0],`It's a <b>${ans[0]}</b> ${ans[1]}.`,{es:'¿Qué juguete es?'})},
+  toyTouch(){const {ans,set}=choose(V.toys,4);
+    return E(`Touch the <em>${ans[0].toUpperCase()}</em>.`,`Touch the ${ans[0]}.`,'',set.map(a=>({label:emo(a[1]),value:a[0]})),ans[0],`This is the <b>${ans[0]}</b> ${ans[1]}.`,{es:`Toca el juguete: ${ans[0].toUpperCase()}.`})},
+  toyBigSmall(){const t=pick(V.toys),big=Math.random()<.5;
+    if(Math.random()<.65)return E(`Touch the <em>${big?'BIG':'SMALL'}</em> ${t[0]}.`,`Touch the ${big?'big':'small'} ${t[0]}.`,'',
+      shuffle([['big',100],['small',40]]).map(x=>({label:`<span style="font-size:${x[1]}px;line-height:1">${t[1]}</span>`,value:x[0]})),big?'big':'small',
+      big?`<b>Big</b> ${t[1]}`:`<b>Small</b> <span style="font-size:14px">${t[1]}</span>`,{es:`Toca el ${t[2]} ${big?'BIG (grande)':'SMALL (pequeño)'}.`});
+    return E(`Is the ${t[0]} big or small?`,`Is the ${t[0]} big or small?`,`<div class="row" style="align-items:flex-end"><span style="font-size:${big?110:34}px;line-height:1">${t[1]}</span><span style="font-size:20px;opacity:.5">🧒</span></div>`,
+      [{label:'big',value:'big'},{label:'small',value:'small'}],big?'big':'small',`It's ${big?'<b>big</b>':'<b>small</b>'}!`,{es:`¿El ${t[2]} es grande o pequeño? (big / small)`})},
+  toyNewOld(){const t=pick(V.toys),nw=Math.random()<.5;
+    const NEW=`<span class="toyv new">${t[1]}<i>✨</i></span>`,OLD=`<span class="toyv old">${t[1]}<i>🕸️</i></span>`;
+    if(Math.random()<.6)return E(`Touch the <em>${nw?'NEW':'OLD'}</em> ${t[0]}.`,`Touch the ${nw?'new':'old'} ${t[0]}.`,'',
+      shuffle([['new',NEW],['old',OLD]]).map(x=>({label:x[1],value:x[0]})),nw?'new':'old',nw?`<b>New</b> ✨ = nuevo`:`<b>Old</b> 🕸️ = viejo`,{es:`Toca el ${t[2]} ${nw?'NEW (nuevo)':'OLD (viejo)'}.`});
+    return E(`Is it new or old?`,`Is the ${t[0]} new or old?`,`<div class="big">${nw?NEW:OLD}</div>`,[{label:'new ✨',value:'new'},{label:'old 🕸️',value:'old'}],nw?'new':'old',
+      nw?`It's <b>new</b> ✨`:`It's <b>old</b> 🕸️`,{es:'¿Es nuevo o viejo? (new / old)'})},
+  toyColour(){const t=pick(V.toys.filter(x=>['ball','car','kite','teddy','robot','balloon','boat','bike'].includes(x[0])));const {ans,set}=choose(V.colours.filter(c=>c[0]!=='white'),3);
+    return E(`Touch the <em>${ans[0].toUpperCase()}</em> ${t[0]}.`,`Touch the ${ans[0]} ${t[0]}.`,'',
+      set.map(c=>({label:`<span class="toyc" style="background:${c[1]}">${t[1]}</span>`,value:c[0]})),ans[0],`The <b>${ans[0]}</b> ${t[0]}: <span class="toyc sm" style="background:${ans[1]}">${t[1]}</span>`,{es:`Toca el ${t[2]} de color ${ans[0].toUpperCase()} (${ans[2]}).`})},
   hallWord(){const {ans,set}=choose(V.halloween);
     return E('Who is it?','Who is it?',bigv(ans[1]),set.map(a=>({label:a[0],value:a[0]})),ans[0],`It's a <b>${ans[0]}</b> ${ans[1]}.`,{es:'¿Quién es?'})},
   hallTouch(){const {ans,set}=choose(V.halloween,4);
@@ -733,6 +763,12 @@ const SUBJECTS=[
     ]},
   ]},
   {id:'ingles',nm:'English',ico:'🇬🇧',c:'#e8483a',lang:'en',sources:[['all','All'],['academia','Academy'],['cole','School']],temas:[
+    {id:'ic-toys',src:'cole',nm:'School · Toys',sb:'School · Unit 1',worlds:[
+      {id:'toys',nm:'My toys',sb:'Ball, teddy, car, kite…',ico:'🧸',c:'#ffc83d',gens:['toyWhat','toyTouch','toyTouch']},
+      {id:'bigsmall',nm:'Big and small',sb:'A big ball, a small car',ico:'🐘',c:'#34ad62',gens:['toyBigSmall']},
+      {id:'newold',nm:'New and old',sb:'A new teddy, an old kite',ico:'✨',c:'#7a5cf0',gens:['toyNewOld']},
+      {id:'toycolours',nm:'Colours',sb:'The red ball, the blue car',ico:'🎨',c:'#e8483a',gens:['toyColour','toyColour','colourName']},
+    ]},
     {id:'ia-hello',src:'academia',nm:'Hello!',sb:'Academy · October',worlds:[
       {id:'colours',nm:'Colours',sb:'Red, blue, green…',ico:'🎨',c:'#e8483a',gens:['colourName','touchColour']},
       {id:'numbers',nm:'Numbers',sb:'One to ten',ico:'🔟',c:'#ffc83d',gens:['countStars','numberWord','wordNumber','howOld']},
@@ -1146,6 +1182,7 @@ function buildVocab(){const L=[];const art=(w,es)=>ART[w]||('el '+es);
   V.zoo.forEach(([w,e,es])=>L.push({w,es,cat:'zoo',pic:e,s:`Look at the ${w}!`,ses:`¡Mira ${art(w,es)}!`}));
   V.halloween.forEach(([w,e,es])=>L.push({w,es,cat:'halloween',pic:e,s:`Look at the ${w}!`,ses:`¡Mira ${art(w,es)}!`}));
   V.school.forEach(([w,e,es,ses])=>L.push({w,es,cat:'school',pic:e,s:w==='scissors'?'These are my scissors.':`This is my ${w}.`,ses}));
+  V.toys.forEach(([w,e,es,ses])=>L.push({w,es,cat:'toys',pic:e,s:`I've got a ${w}.`,ses}));
   V.emotions.forEach(([w,e,es])=>L.push({w,es,cat:'emotions',pic:e,s:`I am ${w}.`,ses:`Estoy ${es}.`}));
   V.body.forEach(([w,e,es])=>L.push({w,es,cat:'body',pic:e,s:`Touch your ${w}!`,ses:`¡Tócate ${art(w,es)}!`}));
   V.actions.forEach(([w,e,es])=>L.push({w,es,cat:'actions',pic:e,s:`Let's ${w}!`,ses:`¡Vamos a ${ACT_ES[w]||es}!`}));
@@ -1171,7 +1208,7 @@ const LEVOC=LE_WORDS.map(([w,e,art,syl])=>({w,pic:e,art,syl,cat:'mpl'.includes(w
 /* ---------- a "pack" = language + words + texts, so the same games work for English and Lengua ---------- */
 const PACKS={
   en:{lang:'en',voc:()=>VOC.filter(v=>v.pic),label:'English',
-    cats:{school:['SCHOOL THINGS','el material escolar'],colours:['COLOURS','los colores'],zoo:['ANIMALS','los animales'],halloween:['HALLOWEEN','los de Halloween'],emotions:['FEELINGS','las caras'],body:['BODY','las partes del cuerpo'],numbers:['NUMBERS','los números'],actions:['ACTIONS','las acciones']},
+    cats:{toys:['TOYS','los juguetes'],school:['SCHOOL THINGS','el material escolar'],colours:['COLOURS','los colores'],zoo:['ANIMALS','los animales'],halloween:['HALLOWEEN','los de Halloween'],emotions:['FEELINGS','las caras'],body:['BODY','las partes del cuerpo'],numbers:['NUMBERS','los números'],actions:['ACTIONS','las acciones']},
     abc:'abcdefghiklmnoprstuwy',good:()=>GOOD_EN,
     t:{hang:'🎈 Balloon words',hangQ:['Guess the word!','Adivina la palabra: toca las letras.'],mem:'🃏 Memory',memQ:['Find the pairs!','Busca las parejas: el dibujo con su palabra.'],
        scr:'🔤 Letter mix',scrQ:['Make the word!','Ordena las letras para formar la palabra.'],lis:'👂 Listen and pop',lisQ:['Listen and pop the balloon!','Escucha la palabra y explota el globo correcto.'],
