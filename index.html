@@ -46,7 +46,7 @@ h1{margin:4px 0 0;font:700 clamp(26px,6vw,38px)/1.1 var(--display);text-wrap:bal
 h2.sec{font:700 24px/1.15 var(--display);margin:26px 0 12px;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
 h2.sec small{font:500 15px var(--body);color:var(--muted)}
 .gear{flex:none;width:56px;height:56px;border-radius:50%;font-size:28px;background:var(--card);border:3px solid var(--ink);box-shadow:0 4px 0 var(--ink)}
-.badge{flex:none;width:72px;height:72px;border-radius:50%;background:var(--c,var(--blue));display:grid;place-items:center;font-size:38px;border:3px solid var(--ink);box-shadow:0 4px 0 var(--ink)}
+.badge{padding:0;cursor:pointer;flex:none;width:72px;height:72px;border-radius:50%;background:var(--c,var(--blue));display:grid;place-items:center;font-size:38px;border:3px solid var(--ink);box-shadow:0 4px 0 var(--ink)}
 
 /* Cards */
 .grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
@@ -326,7 +326,7 @@ body.hasnav .wrap{padding-top:calc(76px + env(safe-area-inset-top,0px))}
 
   <section id="subject" hidden>
     <header class="top">
-      <div class="badge" id="sbadge" aria-hidden="true"></div>
+      <button class="badge" id="sbadge" type="button" aria-label="Abrir o cerrar todas las unidades" title="Abrir / cerrar todas"></button>
       <div class="who"><p class="eyebrow" id="seyebrow"></p><h1 id="stitle"></h1></div>
       <button class="gear" id="gear2" type="button" aria-label="Ajustes">⚙️</button>
     </header>
@@ -1843,6 +1843,9 @@ function listen(){if(!SR)return;
 /* ================= events ================= */
 $('subjects').addEventListener('click',e=>{const b=e.target.closest('[data-s]');if(b&&!b.classList.contains('soon'))renderSubject(b.dataset.s)});
 $('temas').addEventListener('click',e=>{const b=e.target.closest('[data-w]');if(b&&b.closest('summary'))e.preventDefault();if(b)playWorld(b.dataset.t,b.dataset.w)});
+/* tapping the subject icon opens all units, or closes them all if they are all open */
+$('sbadge').addEventListener('click',()=>{const ds=[...document.querySelectorAll('#temas details.unit')];if(!ds.length)return;
+  const openAll=ds.some(d=>!d.open);const o=store.get('openUnits',{});ds.forEach(d=>{d.open=openAll;o[d.dataset.u]=openAll});store.set('openUnits',o);tone([[openAll?660:440,.08]]);});
 $('temas').addEventListener('toggle',e=>{const d=e.target.closest&&e.target.closest('details.unit');if(!d)return;const o=store.get('openUnits',{});o[d.dataset.u]=d.open;store.set('openUnits',o)},true);
 $('chips').addEventListener('click',e=>{const b=e.target.closest('[data-src]');if(b){cfg.src=b.dataset.src;store.set('cfg',cfg);renderSubject(curSubj.id)}});
 $('subjAll').addEventListener('click',playSubject);
