@@ -490,6 +490,7 @@ const bigv=e=>`<div class="big">${e}</div>`;
 
 /* ================= ENGLISH vocabulary ================= */
 const TABLE_SVG='<svg viewBox="0 0 64 64" width="1em" height="1em" aria-label="table" style="vertical-align:-.12em"><rect x="6" y="18" width="52" height="9" rx="3" fill="#c98a4b" stroke="#1d2b5a" stroke-width="3"/><rect x="11" y="27" width="7" height="28" rx="2" fill="#a86b33" stroke="#1d2b5a" stroke-width="3"/><rect x="46" y="27" width="7" height="28" rx="2" fill="#a86b33" stroke="#1d2b5a" stroke-width="3"/></svg>';
+const RECORDER_SVG='<svg viewBox="0 0 64 64" width="1em" height="1em" aria-label="recorder" style="vertical-align:-.12em"><g transform="rotate(-35 32 32)"><rect x="27" y="4" width="10" height="9" rx="3" fill="#f3e3c3" stroke="#1d2b5a" stroke-width="2.5"/><rect x="28" y="12" width="8" height="40" rx="3" fill="#f3e3c3" stroke="#1d2b5a" stroke-width="2.5"/><path d="M27 51h10l3 9H24z" fill="#e7cfa0" stroke="#1d2b5a" stroke-width="2.5" stroke-linejoin="round"/><g fill="#1d2b5a"><circle cx="32" cy="20" r="1.8"/><circle cx="32" cy="26" r="1.8"/><circle cx="32" cy="32" r="1.8"/><circle cx="32" cy="38" r="1.8"/><circle cx="32" cy="44" r="1.8"/></g></g></svg>';
 const V={
   colours:[['red','#e8483a','rojo'],['blue','#2f63d6','azul'],['yellow','#ffc83d','amarillo'],['green','#34ad62','verde'],['pink','#ef6aa6','rosa'],['orange','#f08a3a','naranja'],['purple','#7a5cf0','morado'],['brown','#8b5a2b','marrón'],['black','#1d1d1d','negro'],['white','#ffffff','blanco']],
   numbers:['zero','one','two','three','four','five','six','seven','eight','nine','ten'],
@@ -508,9 +509,10 @@ const V={
     ['scissors','✂️','tijeras','Estas son mis tijeras.'],['bag','🎒','mochila','Esta es mi mochila.'],['pen','🖊️','bolígrafo','Este es mi bolígrafo.'],
     ['door','🚪','puerta','Esta es la puerta.'],['window','🪟','ventana','Esta es la ventana.']],
   /* School (cole) · Toys: toys, big/small, new/old, colours */
-  toys:[['ball','⚽','pelota','Tengo una pelota.'],['teddy','🧸','osito','Tengo un osito.'],['car','🚗','coche','Tengo un coche.'],['kite','🪁','cometa','Tengo una cometa.'],
-    ['robot','🤖','robot','Tengo un robot.'],['train','🚂','tren','Tengo un tren.'],['plane','✈️','avión','Tengo un avión.'],['boat','⛵','barco','Tengo un barco.'],
-    ['yo-yo','🪀','yoyó','Tengo un yoyó.'],['puzzle','🧩','puzle','Tengo un puzle.'],['bike','🚲','bici','Tengo una bici.'],['drum','🥁','tambor','Tengo un tambor.'],['balloon','🎈','globo','Tengo un globo.']],
+  toys:[['ball','⚽','pelota','Tengo una pelota.'],['teddy bear','🧸','osito de peluche','Tengo un osito de peluche.'],['bike','🚲','bici','Tengo una bici.'],
+    ['recorder',RECORDER_SVG,'flauta','Tengo una flauta.'],
+    /* extra toys (not confirmed from the book yet) */
+    ['car','🚗','coche','Tengo un coche.'],['kite','🪁','cometa','Tengo una cometa.'],['robot','🤖','robot','Tengo un robot.'],['train','🚂','tren','Tengo un tren.']],
   emotions:[['happy','😀','contento'],['sad','😢','triste'],['angry','😠','enfadado'],['surprised','😮','sorprendido'],['excited','🤩','emocionado'],['silly','🤪','tontorrón']],
 };
 function sylCountQ(w,e,sy){const n=sy.length;
@@ -702,7 +704,7 @@ const G={
   schoolCount(){const it=pick(V.school.filter(x=>['pencil','crayon','book','chair','ruler','pen'].includes(x[0])));const n=R(2,9);
     return E(`How many ${it[0]}s?`,`How many ${it[0]}s?`,items(it[1],n),numOpts(n,1,10),n,`Let's count: ${V.numbers.slice(1,n+1).join(', ')}! <b>${V.numbers[n]} ${it[0]}s</b>.`,{es:`¿Cuántos hay? (${it[2]})`})},
   /* ---------- School · Toys ---------- */
-  toyWhat(){const {ans,set}=choose(V.toys);
+  toyWhat(){const {ans,set}=choose(V.toys.slice(0,4).concat(shuffle(V.toys.slice(4)).slice(0,2)));
     return E("What's this?","What's this?",bigv(ans[1]),set.map(a=>({label:a[0],value:a[0]})),ans[0],`It's a <b>${ans[0]}</b> ${ans[1]}.`,{es:'¿Qué juguete es?'})},
   toyTouch(){const {ans,set}=choose(V.toys,4);
     return E(`Touch the <em>${ans[0].toUpperCase()}</em>.`,`Touch the ${ans[0]}.`,'',set.map(a=>({label:emo(a[1]),value:a[0]})),ans[0],`This is the <b>${ans[0]}</b> ${ans[1]}.`,{es:`Toca el juguete: ${ans[0].toUpperCase()}.`})},
@@ -718,7 +720,7 @@ const G={
       shuffle([['new',NEW],['old',OLD]]).map(x=>({label:x[1],value:x[0]})),nw?'new':'old',nw?`<b>New</b> ✨ = nuevo`:`<b>Old</b> 🕸️ = viejo`,{es:`Toca el ${t[2]} ${nw?'NEW (nuevo)':'OLD (viejo)'}.`});
     return E(`Is it new or old?`,`Is the ${t[0]} new or old?`,`<div class="big">${nw?NEW:OLD}</div>`,[{label:'new ✨',value:'new'},{label:'old 🕸️',value:'old'}],nw?'new':'old',
       nw?`It's <b>new</b> ✨`:`It's <b>old</b> 🕸️`,{es:'¿Es nuevo o viejo? (new / old)'})},
-  toyColour(){const t=pick(V.toys.filter(x=>['ball','car','kite','teddy','robot','balloon','boat','bike'].includes(x[0])));const {ans,set}=choose(V.colours.filter(c=>c[0]!=='white'),3);
+  toyColour(){const t=pick(V.toys.filter(x=>['ball','car','kite','teddy bear','robot','bike'].includes(x[0])));const {ans,set}=choose(V.colours.filter(c=>c[0]!=='white'),3);
     return E(`Touch the <em>${ans[0].toUpperCase()}</em> ${t[0]}.`,`Touch the ${ans[0]} ${t[0]}.`,'',
       set.map(c=>({label:`<span class="toyc" style="background:${c[1]}">${t[1]}</span>`,value:c[0]})),ans[0],`The <b>${ans[0]}</b> ${t[0]}: <span class="toyc sm" style="background:${ans[1]}">${t[1]}</span>`,{es:`Toca el ${t[2]} de color ${ans[0].toUpperCase()} (${ans[2]}).`})},
   hallWord(){const {ans,set}=choose(V.halloween);
@@ -763,11 +765,11 @@ const SUBJECTS=[
     ]},
   ]},
   {id:'ingles',nm:'English',ico:'🇬🇧',c:'#e8483a',lang:'en',sources:[['all','All'],['academia','Academy'],['cole','School']],temas:[
-    {id:'ic-toys',src:'cole',nm:'School · Toys',sb:'School · Unit 1',worlds:[
-      {id:'toys',nm:'My toys',sb:'Ball, teddy, car, kite…',ico:'🧸',c:'#ffc83d',gens:['toyWhat','toyTouch','toyTouch']},
+    {id:'ic-toys',src:'cole',nm:'Unit 1 · Toys',sb:'School',worlds:[
+      {id:'toys',nm:'My toys',sb:'Bike, recorder, teddy bear, ball',ico:'🧸',c:'#ffc83d',gens:['toyWhat','toyTouch','toyTouch']},
       {id:'bigsmall',nm:'Big and small',sb:'A big ball, a small car',ico:'🐘',c:'#34ad62',gens:['toyBigSmall']},
-      {id:'newold',nm:'New and old',sb:'A new teddy, an old kite',ico:'✨',c:'#7a5cf0',gens:['toyNewOld']},
-      {id:'toycolours',nm:'Colours',sb:'The red ball, the blue car',ico:'🎨',c:'#e8483a',gens:['toyColour','toyColour','colourName']},
+      {id:'newold',nm:'New and old',sb:'A new bike, an old teddy bear',ico:'✨',c:'#7a5cf0',gens:['toyNewOld']},
+      {id:'toycolours',nm:'Colours',sb:'The red ball, the blue bike',ico:'🎨',c:'#e8483a',gens:['toyColour','toyColour','colourName']},
     ]},
     {id:'ia-hello',src:'academia',nm:'Hello!',sb:'Academy · October',worlds:[
       {id:'colours',nm:'Colours',sb:'Red, blue, green…',ico:'🎨',c:'#e8483a',gens:['colourName','touchColour']},
