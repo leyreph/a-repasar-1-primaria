@@ -1018,11 +1018,75 @@ for(const k in QBANK)G[k]=()=>{const it=pick(QBANK[k]);const [q,e,ok,no,h]=it;
   return{q,say:q.includes('_ ')?'Completa con las vocales. ¿Qué habitación es?':q.replace(/_+/g,'…'),v:e?`<div class="big">${e}</div>`:'',
     o:shuffle([ok,...wrong]).map(x=>({label:x,value:x})),a:ok,h,wide:[ok,...wrong].some(x=>x.length>16)}};
 
+/* ================= MATEMÁTICAS · Unidad 1 · Los números hasta el 10 ================= */
+const NUMW=['cero','uno','dos','tres','cuatro','cinco','seis','siete','ocho','nueve','diez'];
+function shapeSvg(k,c,s=90){const a=`fill="${c}" stroke="${INK}" stroke-width="4" stroke-linejoin="round"`;
+  const body={cuadrado:`<rect x="10" y="10" width="80" height="80" rx="4" ${a}/>`,círculo:`<circle cx="50" cy="50" r="40" ${a}/>`,
+    triángulo:`<polygon points="50,8 92,88 8,88" ${a}/>`,rectángulo:`<rect x="2" y="25" width="96" height="50" rx="4" ${a}/>`}[k];
+  return `<svg viewBox="0 0 100 100" width="${s}" height="${s}" aria-label="${k}">${body}</svg>`}
+const SHAPES=['cuadrado','círculo','triángulo','rectángulo'];
+Object.assign(G,{
+  m1Contar(){const n=R(0,10),e=pick(EMO);
+    return{q:'¿Cuántos hay?',say:'Cuenta. ¿Cuántos hay?',v:n?items(e,n):'<div class="big">🫙</div><p>¡No hay ninguno!</p>',o:numOpts(n,0,10),a:n,
+      h:n?`Hay <b>${n}</b>: ${Array.from({length:n},(_,i)=>i+1).join(', ')}.`:'No hay ninguno: son <b>0</b> (cero).'}},
+  m1NumPalabra(){const n=R(0,10);const s=new Set([n]);while(s.size<3)s.add(R(0,10));
+    if(Math.random()<.5)return{q:'¿Cómo se escribe este número?',say:'¿Cómo se escribe este número con letras?',v:`<div class="eq" style="font-size:90px"><b>${n}</b></div>`,
+      o:shuffle([...s]).map(k=>({label:NUMW[k],value:k})),a:n,h:`El ${n} se escribe <b>${NUMW[n]}</b>.`};
+    return{q:`Toca el número <b>${NUMW[n].toUpperCase()}</b>`,say:`Toca el número ${NUMW[n]}`,v:'',o:shuffle([...s]).map(k=>({label:`<span class="num">${k}</span>`,value:k})),a:n,
+      h:`<b>${NUMW[n]}</b> es el <b>${n}</b>.`}},
+  m1Mayor(){const big=Math.random()<.5;const k=Math.random()<.5?2:3;const s=new Set();while(s.size<k)s.add(R(0,10));const arr=[...s];
+    const ans=big?Math.max(...arr):Math.min(...arr);
+    return{q:`¿Cuál es el número <b>${big?'MAYOR':'MENOR'}</b>?`,say:`¿Cuál es el número ${big?'mayor':'menor'}?`,v:'',
+      o:shuffle(arr).map(x=>({label:`<span class="num">${x}</span>`,value:x})),a:ans,
+      h:big?`El <b>${ans}</b> es el mayor: es el que va más tarde al contar.`:`El <b>${ans}</b> es el menor: es el que va antes al contar.`}},
+  m1MasMenos(){let a,b;do{a=R(1,9);b=R(1,9)}while(a===b);const more=Math.random()<.5;const e1=pick(['🦆','🎾','🍓','⭐']),e2=pick(['🐥','🟠','🍋','🌙'].filter(x=>x!==e1));
+    const ans=(more?a>b:a<b)?'a':'b';
+    return{q:`¿Dónde hay <b>${more?'MÁS':'MENOS'}</b>?`,say:`¿Dónde hay ${more?'más':'menos'}?`,v:'',wide:true,
+      o:[{label:items(e1,a),value:'a'},{label:items(e2,b),value:'b'}],a:ans,
+      h:`Hay ${a} ${e1} y ${b} ${e2}. ${Math.max(a,b)} es mayor que ${Math.min(a,b)}.`}},
+  m1Serie(){const up=Math.random()<.5;const len=5;const st=up?R(0,10-len+1):R(len-1,10);const seq=Array.from({length:len},(_,i)=>up?st+i:st-i);
+    const m=R(1,len-1);const ans=seq[m];const shown=seq.map((x,i)=>i===m?'<b>?</b>':x).join(', ');
+    return{q:`¿Qué número falta? (de ${up?'menor a mayor':'mayor a menor'})`,say:`¿Qué número falta? Cuenta ${up?'hacia delante':'hacia atrás'}.`,
+      v:`<div class="eq" style="font-size:38px">${shown}</div>`,o:numOpts(ans,0,10),a:ans,h:`${seq.join(', ')}: falta el <b>${ans}</b>.`}},
+  m1AntesDespues(){const after=Math.random()<.5;const n=after?R(0,9):R(1,10);const ans=after?n+1:n-1;
+    return{q:`¿Qué número va ${after?'<b>DESPUÉS</b>':'<b>ANTES</b>'} del ${n}?`,say:`¿Qué número va ${after?'después':'antes'} del ${n}?`,
+      v:`<div class="eq" style="font-size:60px">${after?`${n}, <b>?</b>`:`<b>?</b>, ${n}`}</div>`,o:numOpts(ans,0,10),a:ans,
+      h:after?`Después del ${n} va el <b>${ans}</b>.`:`Antes del ${n} va el <b>${ans}</b>.`}},
+  m1Forma(){const k=pick(SHAPES);const c=pick(PAL);const s=shuffle([k,...shuffle(SHAPES.filter(x=>x!==k)).slice(0,2)]);
+    if(Math.random()<.5)return{q:'¿Qué forma es?',say:'¿Qué forma es?',v:`<div class="big">${shapeSvg(k,c,120)}</div>`,o:s.map(x=>({label:x,value:x})),a:k,h:`Es un <b>${k}</b>.`};
+    return{q:`Toca el <b>${k.toUpperCase()}</b>`,say:`Toca el ${k}`,v:'',o:s.map(x=>({label:shapeSvg(x,pick(PAL),70),value:x})),a:k,h:`Este es el <b>${k}</b>: ${shapeSvg(k,c,30)}`}},
+  m1FormaObjeto(){const O=[['un tablero de ajedrez','🏁','cuadrado'],['una señal de peligro','⚠️','triángulo'],['un cuadro','🖼️','rectángulo'],['un disco volador','🥏','círculo'],
+      ['una pizza','🍕','círculo'],['una puerta','🚪','rectángulo'],['un reloj','🕐','círculo'],['una ventana cuadrada','🪟','cuadrado'],['una moneda','🪙','círculo'],['un libro','📕','rectángulo']];
+    const [nm,e,k]=pick(O);const s=shuffle([k,...shuffle(SHAPES.filter(x=>x!==k)).slice(0,2)]);
+    return{q:`¿Qué forma tiene ${nm}?`,say:`¿Qué forma tiene ${nm}?`,v:`<div class="big">${e}</div>`,o:s.map(x=>({label:x,value:x})),a:k,h:`${nm[0].toUpperCase()+nm.slice(1)} tiene forma de <b>${k}</b>.`}},
+  m1Tamano(){const e=pick(['⚽','🔵','🍎','🐻','⭐','🎈']);const t=pick(['grande','mediano','pequeño']);const sz={grande:110,mediano:66,pequeño:30};
+    return{q:`Toca el <b>${t.toUpperCase()}</b>`,say:`Toca el ${t}`,v:'',
+      o:shuffle(['grande','mediano','pequeño']).map(x=>({label:`<span style="font-size:${sz[x]}px;line-height:1">${e}</span>`,value:x})),a:t,h:`Este es el <b>${t}</b>: <span style="font-size:${sz[t]/2}px">${e}</span>`}},
+  m1Patron(){const pairs=[[['triángulo','#34ad62',60],['triángulo','#ef6aa6',30]],[['cuadrado','#7a5cf0',50],['círculo','#c6e03a',50]],[['círculo','#2f63d6',50],['triángulo','#e8483a',50]],[['rectángulo','#f08a3a',50],['cuadrado','#2f63d6',40]]];
+    const p=pick(pairs);const len=R(4,5);const seq=Array.from({length:len},(_,i)=>p[i%2]);const ans=len%2;const sv=x=>shapeSvg(x[0],x[1],x[2]);
+    return{q:'¿Qué va después?',say:'Mira la serie. ¿Qué va después?',v:`<div class="row" style="align-items:center;flex-wrap:wrap;gap:6px">${seq.map(sv).join('')}<b style="font-size:40px">?</b></div>`,
+      o:[{label:sv(p[0]),value:0},{label:sv(p[1]),value:1}],a:ans,h:`La serie se repite: ${sv([p[0][0],p[0][1],24])} ${sv([p[1][0],p[1][1],24])}… Ahora toca ${sv([p[ans][0],p[ans][1],28])}.`}},
+  m1Diez(){const a=R(0,10),b=10-a;
+    if(Math.random()<.6)return{q:`${a} y ¿cuántos son 10?`,say:`${a} y cuántos son 10?`,v:`<div class="eq">${a} y <b>?</b> son 10</div>`,o:numOpts(b,0,10),a:b,h:`${a} y <b>${b}</b> son 10. Cuenta desde el ${a} hasta el 10.`};
+    const w=new Set();while(w.size<2){const x=R(0,9),y=R(0,9);if(x+y!==10)w.add(`${x} y ${y}`)}
+    return{q:'¿Qué pareja suma 10?',say:'¿Qué pareja son 10?',v:'<div class="big">🐍</div>',o:shuffle([[`${a} y ${b}`,'ok'],...[...w].map(s=>[s,s])]).map(x=>({label:x[0],value:x[1]})),a:'ok',h:`<b>${a} y ${b}</b> son 10.`}},
+  m1Palitos(){const n=R(1,10);const who=pick(['Mila','Pepe','Luisa']);
+    return{q:`Cada palito es un voto. ¿Cuántos votos tiene ${who}?`,say:`Cada palito es un voto. ¿Cuántos votos tiene ${who}?`,
+      v:`<div class="eq" style="font-size:52px;letter-spacing:4px">${'|'.repeat(n)}</div>`,o:numOpts(n,1,10),a:n,h:`Cuenta los palitos: <b>${n}</b>.`}},
+});
+
 /* ================= CONTENT: subjects → temas → mundos =================
    Keep temas in chronological order (oldest first): the page shows the newest on top.
    To add new material: add generators above and a tema here.            */
 const SUBJECTS=[
   {id:'mates',nm:'Matemáticas',ico:'🔢',c:'#2f63d6',temas:[
+    {id:'m-u1',nm:'Unidad 1',sb:'Los números hasta el 10',worlds:[
+      {id:'contar',nm:'Contar',sb:'Del 0 al 10',ico:'🖐️',c:'#ffc83d',gens:['m1Contar','m1Contar','m1NumPalabra','m1Palitos']},
+      {id:'mayor',nm:'Mayor y menor',sb:'¿Dónde hay más?',ico:'🦆',c:'#e8483a',gens:['m1Mayor','m1Mayor','m1MasMenos']},
+      {id:'series',nm:'Series',sb:'Antes, después y el orden',ico:'🔢',c:'#2f63d6',gens:['m1Serie','m1AntesDespues']},
+      {id:'formas',nm:'Formas y tamaños',sb:'Cuadrado, círculo… grande, pequeño',ico:'🔺',c:'#7a5cf0',gens:['m1Forma','m1FormaObjeto','m1Tamano','m1Patron']},
+      {id:'diez',nm:'Parejas que son 10',sb:'4 y 6 son 10',ico:'🐍',c:'#34ad62',gens:['m1Diez']},
+    ]},
     {id:'m-u2',nm:'Unidad 2',sb:'Sumar, restar y medir',worlds:[
       {id:'sumar',nm:'Sumar',sb:'Juntar hasta el 10',ico:'🐱',c:'#ffc83d',gens:['sumaDibujos','sumaDibujos','sumaColumna','sumaRecta','sumaJuguetes']},
       {id:'restar',nm:'Restar',sb:'Quitar hasta el 10',ico:'🐦',c:'#e8483a',gens:['restaDibujos','restaDibujos','restaColumna','restaRecta','restaCeroTodo']},
