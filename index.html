@@ -272,6 +272,7 @@ body.hasnav .wrap{padding-top:calc(76px + env(safe-area-inset-top,0px))}
 .big .toyv{font-size:96px}
 .toyc{display:inline-grid;place-items:center;width:84px;height:84px;border-radius:50%;font-size:50px;border:3px solid var(--ink)}
 .toyc.sm{width:30px;height:30px;font-size:18px;border-width:2px;vertical-align:middle}
+.famphoto{font-size:60px;line-height:1}
 #confetti{position:fixed;inset:0;pointer-events:none;z-index:40}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style>
@@ -513,6 +514,10 @@ const V={
     ['recorder',RECORDER_SVG,'flauta','Tengo una flauta.'],
     /* extra toys (not confirmed from the book yet) */
     ['car','🚗','coche','Tengo un coche.'],['kite','🪁','cometa','Tengo una cometa.'],['robot','🤖','robot','Tengo un robot.'],['train','🚂','tren','Tengo un tren.']],
+  /* School (cole) · Unit 2 · My family */
+  family:[['mum','👩','mamá','Esta es mi mamá.','she'],['dad','🧔','papá','Este es mi papá.','he'],['sister','👧','hermana','Esta es mi hermana.','she'],
+    ['brother','👦','hermano','Este es mi hermano.','he'],['grandma','👵','abuela','Esta es mi abuela.','she'],['grandpa','👴','abuelo','Este es mi abuelo.','he'],
+    ['baby','👶','bebé','Este es el bebé.','he']],
   emotions:[['happy','😀','contento'],['sad','😢','triste'],['angry','😠','enfadado'],['surprised','😮','sorprendido'],['excited','🤩','emocionado'],['silly','🤪','tontorrón']],
 };
 function sylCountQ(w,e,sy){const n=sy.length;
@@ -723,6 +728,17 @@ const G={
   toyColour(){const t=pick(V.toys.filter(x=>['ball','car','kite','teddy bear','robot','bike'].includes(x[0])));const {ans,set}=choose(V.colours.filter(c=>c[0]!=='white'),3);
     return E(`Touch the <em>${ans[0].toUpperCase()}</em> ${t[0]}.`,`Touch the ${ans[0]} ${t[0]}.`,'',
       set.map(c=>({label:`<span class="toyc" style="background:${c[1]}">${t[1]}</span>`,value:c[0]})),ans[0],`The <b>${ans[0]}</b> ${t[0]}: <span class="toyc sm" style="background:${ans[1]}">${t[1]}</span>`,{es:`Toca el ${t[2]} de color ${ans[0].toUpperCase()} (${ans[2]}).`})},
+  /* ---------- School · My family ---------- */
+  famWhat(){const {ans,set}=choose(V.family);const pr=ans[0]==='baby'?'this':ans[4];
+    return E(`Who is ${pr}?`,`Who is ${pr}?`,bigv(ans[1]),set.map(a=>({label:a[0],value:a[0]})),ans[0],`${ans[4]==='she'?'She':'He'} is my <b>${ans[0]}</b> ${ans[1]}.`,{es:`¿Quién es? (${pr==='she'?'ella':pr==='he'?'él':'este'})`})},
+  famTouch(){const {ans,set}=choose(V.family,4);
+    return E(`Touch <em>${ans[0].toUpperCase()}</em>.`,`Touch ${ans[0]}.`,'',set.map(a=>({label:emo(a[1]),value:a[0]})),ans[0],`This is <b>${ans[0]}</b> ${ans[1]} (${ans[2]}).`,{es:`Toca: ${ans[0].toUpperCase()}.`})},
+  famSentence(){const {ans,set}=choose(V.family);const art=ans[0]==='baby'?'the':'my';
+    return E('Finish the sentence!',`This is ${art}… who?`,`<div class="big">${ans[1]}</div><div class="eq lword" style="font-size:30px">This is ${art} <b>___</b>.</div>`,
+      set.map(a=>({label:a[0],value:a[0]})),ans[0],`This is ${art} <b>${ans[0]}</b>. (${ans[3]})`,{es:`Completa la frase: «Este/Esta es mi…»`})},
+  famPhoto(){const fam=shuffle(V.family).slice(0,5);const t=pick(fam);
+    return E(`Find the <em>${t[0].toUpperCase()}</em> in the family photo.`,`Find the ${t[0]} in the family photo.`,`<div class="famphoto">📸</div>`,
+      fam.map(a=>({label:emo(a[1]),value:a[0]})),t[0],`The <b>${t[0]}</b> is ${t[1]} (${t[2]}).`,{es:`Busca: ${t[0].toUpperCase()} en la foto de familia.`,cols:5})},
   hallWord(){const {ans,set}=choose(V.halloween);
     return E('Who is it?','Who is it?',bigv(ans[1]),set.map(a=>({label:a[0],value:a[0]})),ans[0],`It's a <b>${ans[0]}</b> ${ans[1]}.`,{es:'¿Quién es?'})},
   hallTouch(){const {ans,set}=choose(V.halloween,4);
@@ -1139,6 +1155,11 @@ const SUBJECTS=[
       {id:'schoolcount',nm:'Count them!',sb:'How many crayons?',ico:'🖍️',c:'#34ad62',gens:['schoolCount','schoolWhat']},
       {id:'circle',nm:'Circle time',sb:'Colours and feelings',ico:'🎨',c:'#ef6aa6',gens:['colourName','touchColour','emoWord','emoTouch']},
       {id:'lava3',nm:'The Floor Is Lava',sb:'Jump, left, right, run',ico:'🌋',c:'#e8483a',gens:['teacherSays','direction']},
+    ]},
+    {id:'ic-family',src:'cole',nm:'Unit 2 · My family',sb:'School · November',worlds:[
+      {id:'family',nm:'My family',sb:'Mum, dad, sister, brother…',ico:'👨‍👩‍👧‍👦',c:'#ef6aa6',gens:['famWhat','famTouch','famTouch']},
+      {id:'thisis',nm:'This is my…',sb:'This is my grandma',ico:'👵',c:'#ffc83d',gens:['famSentence','famPhoto']},
+      {id:'famtoys',nm:'Family and toys',sb:'Units 1 and 2',ico:'🧸',c:'#34ad62',gens:['famWhat','famTouch','toyWhat','toyTouch']},
     ]},
   ]},
   {id:'natu',nm:'Naturales',ico:'🌱',c:'#34ad62',temas:[
@@ -1558,6 +1579,7 @@ function buildVocab(){const L=[];const art=(w,es)=>ART[w]||('el '+es);
   V.halloween.forEach(([w,e,es])=>L.push({w,es,cat:'halloween',pic:e,s:`Look at the ${w}!`,ses:`¡Mira ${art(w,es)}!`}));
   V.school.forEach(([w,e,es,ses])=>L.push({w,es,cat:'school',pic:e,s:w==='scissors'?'These are my scissors.':`This is my ${w}.`,ses}));
   V.toys.forEach(([w,e,es,ses])=>L.push({w,es,cat:'toys',pic:e,s:`I've got a ${w}.`,ses}));
+  V.family.forEach(([w,e,es,ses])=>L.push({w,es,cat:'family',pic:e,s:w==='baby'?'This is the baby.':`This is my ${w}.`,ses}));
   V.emotions.forEach(([w,e,es])=>L.push({w,es,cat:'emotions',pic:e,s:`I am ${w}.`,ses:`Estoy ${es}.`}));
   V.body.forEach(([w,e,es])=>L.push({w,es,cat:'body',pic:e,s:`Touch your ${w}!`,ses:`¡Tócate ${art(w,es)}!`}));
   V.actions.forEach(([w,e,es])=>L.push({w,es,cat:'actions',pic:e,s:`Let's ${w}!`,ses:`¡Vamos a ${ACT_ES[w]||es}!`}));
@@ -1583,7 +1605,7 @@ const LEVOC=LE_WORDS.map(([w,e,art,syl])=>({w,pic:e,art,syl,cat:'mpl'.includes(w
 /* ---------- a "pack" = language + words + texts, so the same games work for English and Lengua ---------- */
 const PACKS={
   en:{lang:'en',voc:()=>VOC.filter(v=>v.pic),label:'English',
-    cats:{toys:['TOYS','los juguetes'],school:['SCHOOL THINGS','el material escolar'],colours:['COLOURS','los colores'],zoo:['ANIMALS','los animales'],halloween:['HALLOWEEN','los de Halloween'],emotions:['FEELINGS','las caras'],body:['BODY','las partes del cuerpo'],numbers:['NUMBERS','los números'],actions:['ACTIONS','las acciones']},
+    cats:{family:['FAMILY','la familia'],toys:['TOYS','los juguetes'],school:['SCHOOL THINGS','el material escolar'],colours:['COLOURS','los colores'],zoo:['ANIMALS','los animales'],halloween:['HALLOWEEN','los de Halloween'],emotions:['FEELINGS','las caras'],body:['BODY','las partes del cuerpo'],numbers:['NUMBERS','los números'],actions:['ACTIONS','las acciones']},
     abc:'abcdefghiklmnoprstuwy',good:()=>GOOD_EN,
     t:{hang:'🎈 Balloon words',hangQ:['Guess the word!','Adivina la palabra: toca las letras.'],mem:'🃏 Memory',memQ:['Find the pairs!','Busca las parejas: el dibujo con su palabra.'],
        scr:'🔤 Letter mix',scrQ:['Make the word!','Ordena las letras para formar la palabra.'],lis:'👂 Listen and pop',lisQ:['Listen and pop the balloon!','Escucha la palabra y explota el globo correcto.'],
