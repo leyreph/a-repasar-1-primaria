@@ -519,8 +519,11 @@ const bigv=e=>`<div class="big">${e}</div>`;
 /* ================= ENGLISH vocabulary ================= */
 const TABLE_SVG='<svg viewBox="0 0 64 64" width="1em" height="1em" aria-label="table" style="vertical-align:-.12em"><rect x="6" y="18" width="52" height="9" rx="3" fill="#c98a4b" stroke="#1d2b5a" stroke-width="3"/><rect x="11" y="27" width="7" height="28" rx="2" fill="#a86b33" stroke="#1d2b5a" stroke-width="3"/><rect x="46" y="27" width="7" height="28" rx="2" fill="#a86b33" stroke="#1d2b5a" stroke-width="3"/></svg>';
 const RECORDER_SVG='<svg viewBox="0 0 64 64" width="1em" height="1em" aria-label="recorder" style="vertical-align:-.12em"><g transform="rotate(-35 32 32)"><rect x="27" y="4" width="10" height="9" rx="3" fill="#f3e3c3" stroke="#1d2b5a" stroke-width="2.5"/><rect x="28" y="12" width="8" height="40" rx="3" fill="#f3e3c3" stroke="#1d2b5a" stroke-width="2.5"/><path d="M27 51h10l3 9H24z" fill="#e7cfa0" stroke="#1d2b5a" stroke-width="2.5" stroke-linejoin="round"/><g fill="#1d2b5a"><circle cx="32" cy="20" r="1.8"/><circle cx="32" cy="26" r="1.8"/><circle cx="32" cy="32" r="1.8"/><circle cx="32" cy="38" r="1.8"/><circle cx="32" cy="44" r="1.8"/></g></g></svg>';
+const RUBBER_SVG='<svg viewBox="0 0 64 64" width="1em" height="1em" aria-label="rubber" style="vertical-align:-.12em"><g transform="rotate(-20 32 32)"><rect x="10" y="22" width="26" height="20" rx="4" fill="#ef6aa6" stroke="#1d2b5a" stroke-width="3"/><rect x="34" y="22" width="20" height="20" rx="4" fill="#5b8def" stroke="#1d2b5a" stroke-width="3"/></g></svg>';
+const SHARP_SVG='<svg viewBox="0 0 64 64" width="1em" height="1em" aria-label="sharpener" style="vertical-align:-.12em"><rect x="14" y="16" width="32" height="34" rx="6" fill="#ffc83d" stroke="#1d2b5a" stroke-width="3"/><circle cx="30" cy="33" r="7" fill="#fff" stroke="#1d2b5a" stroke-width="3"/><path d="M46 24l10 9-10 9" fill="#c7ccd8" stroke="#1d2b5a" stroke-width="3" stroke-linejoin="round"/></svg>';
+const CALC_SVG='<svg viewBox="0 0 64 64" width="1em" height="1em" aria-label="calculator" style="vertical-align:-.12em"><rect x="14" y="6" width="36" height="52" rx="6" fill="#7a8bb0" stroke="#1d2b5a" stroke-width="3"/><rect x="19" y="11" width="26" height="11" rx="2" fill="#dff3c7" stroke="#1d2b5a" stroke-width="2"/><g fill="#fff" stroke="#1d2b5a" stroke-width="1.5"><rect x="19" y="27" width="7" height="6" rx="1.5"/><rect x="29" y="27" width="7" height="6" rx="1.5"/><rect x="39" y="27" width="6" height="6" rx="1.5"/><rect x="19" y="37" width="7" height="6" rx="1.5"/><rect x="29" y="37" width="7" height="6" rx="1.5"/><rect x="39" y="37" width="6" height="16" rx="1.5" fill="#ffc83d"/><rect x="19" y="47" width="17" height="6" rx="1.5"/></g></svg>';
 const V={
-  colours:[['red','#e8483a','rojo'],['blue','#2f63d6','azul'],['yellow','#ffc83d','amarillo'],['green','#34ad62','verde'],['pink','#ef6aa6','rosa'],['orange','#f08a3a','naranja'],['purple','#7a5cf0','morado'],['brown','#8b5a2b','marrón'],['black','#1d1d1d','negro'],['white','#ffffff','blanco']],
+  colours:[['red','#e8483a','rojo'],['blue','#2f63d6','azul'],['yellow','#ffc83d','amarillo'],['green','#34ad62','verde'],['pink','#ef6aa6','rosa'],['orange','#f08a3a','naranja'],['purple','#7a5cf0','morado'],['brown','#8b5a2b','marrón'],['black','#1d1d1d','negro'],['white','#ffffff','blanco'],['grey','#9aa3b2','gris'],['light blue','#8fd3ff','azul claro']],
   numbers:['zero','one','two','three','four','five','six','seven','eight','nine','ten'],
   zoo:[['lion','🦁','león'],['elephant','🐘','elefante'],['monkey','🐒','mono'],['giraffe','🦒','jirafa'],['tiger','🐯','tigre'],['zebra','🦓','cebra'],['snake','🐍','serpiente'],['bear','🐻','oso'],['crocodile','🐊','cocodrilo'],['hippo','🦛','hipopótamo'],['penguin','🐧','pingüino'],['kangaroo','🦘','canguro']],
   days:['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'],
@@ -534,8 +537,9 @@ const V={
   /* Unit 3 · classroom (18 Nov). first five taught in class; the rest are extra common classroom words */
   school:[['pencil','✏️','lápiz','Este es mi lápiz.'],['crayon','🖍️','cera','Esta es mi cera.'],['book','📖','libro','Este es mi libro.'],
     ['chair','🪑','silla','Esta es mi silla.'],['table',TABLE_SVG,'mesa','Esta es mi mesa.'],['ruler','📏','regla','Esta es mi regla.'],
-    ['scissors','✂️','tijeras','Estas son mis tijeras.'],['bag','🎒','mochila','Esta es mi mochila.'],['pen','🖊️','bolígrafo','Este es mi bolígrafo.'],
-    ['door','🚪','puerta','Esta es la puerta.'],['window','🪟','ventana','Esta es la ventana.']],
+    ['pen','🖊️','bolígrafo','Este es mi bolígrafo.'],['rubber',RUBBER_SVG,'goma','Esta es mi goma.'],['sharpener',SHARP_SVG,'sacapuntas','Este es mi sacapuntas.'],
+    ['notebook','📓','cuaderno','Este es mi cuaderno.'],['calculator',CALC_SVG,'calculadora','Esta es mi calculadora.'],
+    ['pencil case','👝','estuche','Este es mi estuche.'],['school bag','🎒','mochila','Esta es mi mochila.']],
   /* School (cole) · Toys: toys, big/small, new/old, colours */
   toys:[['ball','⚽','pelota','Tengo una pelota.'],['teddy bear','🧸','osito de peluche','Tengo un osito de peluche.'],['bike','🚲','bici','Tengo una bici.'],
     ['recorder',RECORDER_SVG,'flauta','Tengo una flauta.'],
@@ -550,6 +554,22 @@ const V={
     ['windy','🌬️','viento',"It's windy.",'Hace viento.'],['snowy','❄️','nieve',"It's snowy.",'Está nevando.'],['stormy','⛈️','tormenta',"It's stormy.",'Hay tormenta.']],
   emotions:[['happy','😀','contento'],['sad','😢','triste'],['angry','😠','enfadado'],['surprised','😮','sorprendido'],['excited','🤩','emocionado'],['silly','🤪','tontorrón']],
 };
+/* the exact vocabulary list the academy sent for the test (25 Nov) */
+const TEST_COLOURS=['white','red','grey','blue','light blue','brown','pink','purple','black','yellow','green','orange'];
+const TEST_SCHOOL=['rubber','book','sharpener','notebook','ruler','pencil','pen','calculator','pencil case','school bag'];
+function testPool(){const out=[];
+  V.colours.forEach(c=>{if(TEST_COLOURS.includes(c[0]))out.push({w:c[0],es:c[2],pic:`<span class="blob" style="display:inline-block;width:90px;height:90px;background:${c[1]}"></span>`})});
+  V.school.forEach(x=>{if(TEST_SCHOOL.includes(x[0]))out.push({w:x[0],es:x[2],pic:x[1]})});return out;}
+/* believable spelling mistakes: swap, drop or double a letter, or change a vowel */
+function misspell(w,n){const out=new Set();let g=0;const V5='aeiou';
+  while(out.size<n&&g++<200){let a=[...w];const i=R(1,a.length-2);const k=R(0,3);
+    if(a[i]===' '||a[i+1]===' ')continue;
+    if(k===0&&a[i]!==a[i+1])[a[i],a[i+1]]=[a[i+1],a[i]];
+    else if(k===1)a.splice(i,1);
+    else if(k===2)a.splice(i,0,a[i]);
+    else if(V5.includes(a[i]))a[i]=pick(V5.split('').filter(v=>v!==a[i]));else continue;
+    const m=a.join('');if(m!==w)out.add(m)}
+  return [...out];}
 function sylCountQ(w,e,sy){const n=sy.length;
   return{q:`¿Cuántas sílabas tiene? Da palmadas 👏`,say:`${w}. Da una palmada por cada sílaba. ¿Cuántas sílabas tiene ${w}?`,v:`<div class="big">${e}</div><p class="lword">${w}</p>`,
     o:[1,2,3,4].map(x=>({label:`<span class="num">${x}</span>`,value:x})),a:n,
@@ -736,7 +756,7 @@ const G={
     return E("What's this?","What's this?",bigv(ans[1]),set.map(a=>({label:a[0],value:a[0]})),ans[0],many?`They're <b>scissors</b> ${ans[1]}.`:`It's a <b>${ans[0]}</b> ${ans[1]}.`,{es:'¿Qué es esto?'})},
   schoolTouch(){const {ans,set}=choose(V.school,4);
     return E(`Touch the <em>${ans[0].toUpperCase()}</em>.`,`Touch the ${ans[0]}.`,'',set.map(a=>({label:emo(a[1]),value:a[0]})),ans[0],`This is the <b>${ans[0]}</b> ${ans[1]}.`,{es:`Toca: ${ans[0].toUpperCase()}.`})},
-  schoolCount(){const it=pick(V.school.filter(x=>['pencil','crayon','book','chair','ruler','pen'].includes(x[0])));const n=R(2,9);
+  schoolCount(){const it=pick(V.school.filter(x=>['pencil','crayon','book','chair','ruler','pen','rubber','notebook','calculator'].includes(x[0])));const n=R(2,9);
     return E(`How many ${it[0]}s?`,`How many ${it[0]}s?`,items(it[1],n),numOpts(n,1,10),n,`Let's count: ${V.numbers.slice(1,n+1).join(', ')}! <b>${V.numbers[n]} ${it[0]}s</b>.`,{es:`¿Cuántos hay? (${it[2]})`})},
   /* ---------- School · Toys ---------- */
   toyWhat(){const {ans,set}=choose(V.toys.slice(0,4).concat(shuffle(V.toys.slice(4)).slice(0,2)));
@@ -774,6 +794,17 @@ const G={
     return E("What's the weather like?","What's the weather like?",bigv(ans[1]),set.map(a=>({label:`It's ${a[0]}.`,value:a[0]})),ans[0],`<b>${ans[3]}</b> ${ans[1]} (${ans[4]})`,{es:'¿Qué tiempo hace?'})},
   weatherTouch(){const {ans,set}=choose(V.weather,4);
     return E(`Touch <em>${ans[0].toUpperCase()}</em>.`,`It's ${ans[0]}! Touch ${ans[0]}.`,'',set.map(a=>({label:emo(a[1]),value:a[0]})),ans[0],`${ans[1]} <b>${ans[3]}</b> (${ans[4]})`,{es:`Toca: ${ans[0].toUpperCase()}.`})},
+  /* ---------- Academy test (week of 30 Nov): colours + school supplies, both ways + spelling ---------- */
+  testEsEn(){const pool=testPool();const {ans,set}=choose(pool);
+    return E(`How do you say <em>${ans.es}</em> in English?`,`How do you say ${ans.es} in English?`,ans.pic?bigv(ans.pic):'',set.map(a=>({label:a.w,value:a.w})),ans.w,
+      `${ans.es} = <b>${ans.w}</b>`,{es:`¿Cómo se dice «${ans.es}» en inglés?`})},
+  testEnEs(){const pool=testPool();const {ans,set}=choose(pool);
+    return E(`What is <em>${ans.w.toUpperCase()}</em> in Spanish?`,`What is ${ans.w} in Spanish?`,'',set.map(a=>({label:a.es,value:a.w})),ans.w,
+      `${ans.w} = <b>${ans.es}</b>`,{es:`¿Qué es «${ans.w}» en español?`})},
+  testSpell(){const pool=testPool().filter(x=>x.w.replace(' ','').length>=3);const t=pick(pool);const bad=misspell(t.w,2);
+    return E('Which one is spelt right?',`Which one is spelt right? ${t.w}.`,t.pic?bigv(t.pic):'',
+      shuffle([[t.w,'ok'],...bad.map((b,k)=>[b,'x'+k])]).map(x=>({label:`<span class="lword" style="font-size:24px">${x[0]}</span>`,value:x[1]})),'ok',
+      `It's spelt <b>${t.w}</b>: ${t.w.toUpperCase().replace(/ /g,'  ').split('').join(' ')}`,{es:`¿Cuál está bien escrita? (${t.es})`})},
   hallWord(){const {ans,set}=choose(V.halloween);
     return E('Who is it?','Who is it?',bigv(ans[1]),set.map(a=>({label:a[0],value:a[0]})),ans[0],`It's a <b>${ans[0]}</b> ${ans[1]}.`,{es:'¿Quién es?'})},
   hallTouch(){const {ans,set}=choose(V.halloween,4);
@@ -1187,6 +1218,7 @@ const SUBJECTS=[
       {id:'school',nm:'School things',sb:'Pencil, crayon, book…',ico:'✏️',c:'#ffc83d',gens:['schoolWhat','schoolTouch','schoolTouch']},
       {id:'schoolcount',nm:'Count them!',sb:'How many crayons?',ico:'🖍️',c:'#34ad62',gens:['schoolCount','schoolWhat']},
       {id:'weather',nm:'The weather',sb:'Sunny, rainy, cloudy…',ico:'🌦️',c:'#2f63d6',gens:['weatherWhat','weatherTouch']},
+      {id:'test',nm:'Test practice',sb:'Colours + school supplies: English ↔ Spanish, spelling',ico:'📝',c:'#7a5cf0',gens:['testEsEn','testEnEs','testSpell']},
     ]},
     {id:'ic-family',src:'cole',nm:'Unit 2 · My family',sb:'School · November',worlds:[
       {id:'family',nm:'My family',sb:'Mum, dad, sister, brother…',ico:'👨‍👩‍👧‍👦',c:'#ef6aa6',gens:['famWhat','famTouch','famTouch']},
