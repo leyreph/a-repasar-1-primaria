@@ -300,6 +300,8 @@ body.hasnav .wrap{padding-top:calc(76px + env(safe-area-inset-top,0px))}
 .plink{display:flex;align-items:center;justify-content:space-between}.plinki{font-size:20px}
 .slot[data-fixed]{text-transform:none}
 .slots.long .slot{width:clamp(26px,8.4vw,40px);font-size:32px}
+.hgt{line-height:1;position:relative}
+.hgt.me::after{content:'⭐';position:absolute;top:-.35em;left:50%;transform:translateX(-50%);font-size:28px}
 #confetti{position:fixed;inset:0;pointer-events:none;z-index:40}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style>
@@ -546,9 +548,10 @@ const V={
     /* extra toys (not confirmed from the book yet) */
     ['car','🚗','coche','Tengo un coche.'],['kite','🪁','cometa','Tengo una cometa.'],['robot','🤖','robot','Tengo un robot.'],['train','🚂','tren','Tengo un tren.']],
   /* School (cole) · Unit 2 · My family */
+  /* words from the Open Up 1 worksheet (Unit 2, Lesson 2): grandad, uncle, sister, mum, dad, grandma (+ brother) */
   family:[['mum','👩','mamá','Esta es mi mamá.','she'],['dad','🧔','papá','Este es mi papá.','he'],['sister','👧','hermana','Esta es mi hermana.','she'],
-    ['brother','👦','hermano','Este es mi hermano.','he'],['grandma','👵','abuela','Esta es mi abuela.','she'],['grandpa','👴','abuelo','Este es mi abuelo.','he'],
-    ['baby','👶','bebé','Este es el bebé.','he']],
+    ['brother','👦','hermano','Este es mi hermano.','he'],['grandma','👵','abuela','Esta es mi abuela.','she'],['grandad','👴','abuelo','Este es mi abuelo.','he'],
+    ['uncle','🤵','tío','Este es mi tío.','he']],
   /* Academy Unit 3 · the weather (23 Nov) */
   weather:[['sunny','☀️','sol',"It's sunny.",'Hace sol.'],['rainy','🌧️','lluvia',"It's rainy.",'Está lloviendo.'],['cloudy','☁️','nublado',"It's cloudy.",'Está nublado.'],
     ['windy','🌬️','viento',"It's windy.",'Hace viento.'],['snowy','❄️','nieve',"It's snowy.",'Está nevando.'],['stormy','⛈️','tormenta',"It's stormy.",'Hay tormenta.']],
@@ -779,13 +782,27 @@ const G={
     return E(`Touch the <em>${ans[0].toUpperCase()}</em> ${t[0]}.`,`Touch the ${ans[0]} ${t[0]}.`,'',
       set.map(c=>({label:`<span class="toyc" style="background:${c[1]}">${t[1]}</span>`,value:c[0]})),ans[0],`The <b>${ans[0]}</b> ${t[0]}: <span class="toyc sm" style="background:${ans[1]}">${t[1]}</span>`,{es:`Toca el ${t[2]} de color ${ans[0].toUpperCase()} (${ans[2]}).`})},
   /* ---------- School · My family ---------- */
-  famWhat(){const {ans,set}=choose(V.family);const pr=ans[0]==='baby'?'this':ans[4];
+  famWhat(){const {ans,set}=choose(V.family);const pr=ans[4];
     return E(`Who is ${pr}?`,`Who is ${pr}?`,bigv(ans[1]),set.map(a=>({label:a[0],value:a[0]})),ans[0],`${ans[4]==='she'?'She':'He'} is my <b>${ans[0]}</b> ${ans[1]}.`,{es:`¿Quién es? (${pr==='she'?'ella':pr==='he'?'él':'este'})`})},
   famTouch(){const {ans,set}=choose(V.family,4);
     return E(`Touch <em>${ans[0].toUpperCase()}</em>.`,`Touch ${ans[0]}.`,'',set.map(a=>({label:emo(a[1]),value:a[0]})),ans[0],`This is <b>${ans[0]}</b> ${ans[1]} (${ans[2]}).`,{es:`Toca: ${ans[0].toUpperCase()}.`})},
-  famSentence(){const {ans,set}=choose(V.family);const art=ans[0]==='baby'?'the':'my';
+  famSentence(){const {ans,set}=choose(V.family);const art='my';
     return E('Finish the sentence!',`This is ${art}… who?`,`<div class="big">${ans[1]}</div><div class="eq lword" style="font-size:30px">This is ${art} <b>___</b>.</div>`,
       set.map(a=>({label:a[0],value:a[0]})),ans[0],`This is ${art} <b>${ans[0]}</b>. (${ans[3]})`,{es:`Completa la frase: «Este/Esta es mi…»`})},
+  famDescribe(){const he=Math.random()<.5,P=he?"He's":"She's",adj=pick(['old','young','tall','short']);
+    const ES={old:'mayor',young:'joven',tall:he?'alto':'alta',short:he?'bajo':'baja'};
+    let v;
+    if(adj==='old')v=bigv(he?'👴':'👵');
+    else if(adj==='young')v=bigv(he?'👦':'👧');
+    else{const e=he?'🧍‍♂️':'🧍‍♀️';const tall=adj==='tall';
+      v=`<div class="row" style="align-items:flex-end;gap:26px"><span class="hgt${tall?' me':''}" style="font-size:${tall?110:110}px">${e}</span><span class="hgt${tall?'':' me'}" style="font-size:${tall?60:110}px">${e}</span></div>`;
+      v=tall?`<div class="row" style="align-items:flex-end;gap:26px"><span class="hgt me" style="font-size:120px">${e}</span><span class="hgt" style="font-size:62px">${e}</span></div>`
+            :`<div class="row" style="align-items:flex-end;gap:26px"><span class="hgt" style="font-size:120px">${e}</span><span class="hgt me" style="font-size:62px">${e}</span></div>`;}
+    const opp={old:'young',young:'old',tall:'short',short:'tall'}[adj],OP=he?"She's":"He's";
+    const q=adj==='tall'||adj==='short'?'Look at the one with the ⭐. Is it tall or short?':'Look! Old or young?';
+    return E(q,adj==='tall'||adj==='short'?'Look at the one with the star.':'Old or young?',v,
+      shuffle([[`${P} ${adj}.`,'ok'],[`${P} ${opp}.`,'x1'],[`${OP} ${adj}.`,'x2']]).map(x=>({label:x[0],value:x[1]})),'ok',
+      `<b>${P} ${adj}.</b> (${he?'Él':'Ella'} es ${ES[adj]}.) ${he?'He = él (chico)':'She = ella (chica)'}`,{es:adj==='tall'||adj==='short'?'Mira el de la estrella ⭐. ¿Es alto o bajo? ¿Chico (he) o chica (she)?':'¿Es mayor (old) o joven (young)? ¿Chico (he) o chica (she)?'})},
   famPhoto(){const fam=shuffle(V.family).slice(0,5);const t=pick(fam);
     return E(`Find the <em>${t[0].toUpperCase()}</em> in the family photo.`,`Find the ${t[0]} in the family photo.`,`<div class="famphoto">📸</div>`,
       fam.map(a=>({label:emo(a[1]),value:a[0]})),t[0],`The <b>${t[0]}</b> is ${t[1]} (${t[2]}).`,{es:`Busca: ${t[0].toUpperCase()} en la foto de familia.`,cols:5})},
@@ -1221,8 +1238,9 @@ const SUBJECTS=[
       {id:'test',nm:'Test practice',sb:'Colours + school supplies: English ↔ Spanish, spelling',ico:'📝',c:'#7a5cf0',gens:['testEsEn','testEnEs','testSpell']},
     ]},
     {id:'ic-family',src:'cole',nm:'Unit 2 · My family',sb:'School · November',worlds:[
-      {id:'family',nm:'My family',sb:'Mum, dad, sister, brother…',ico:'👨‍👩‍👧‍👦',c:'#ef6aa6',gens:['famWhat','famTouch','famTouch']},
-      {id:'thisis',nm:'This is my…',sb:'This is my grandma',ico:'👵',c:'#ffc83d',gens:['famSentence','famPhoto']},
+      {id:'family',nm:'My family',sb:'Mum, dad, uncle, grandad…',ico:'👨‍👩‍👧‍👦',c:'#ef6aa6',gens:['famWhat','famTouch','famTouch']},
+      {id:'thisis',nm:'This is my…',sb:'This is my grandad',ico:'👴',c:'#ffc83d',gens:['famSentence','famPhoto']},
+      {id:'describe',nm:"He's tall, she's old",sb:'Old, young, tall, short',ico:'📏',c:'#34ad62',gens:['famDescribe']},
     ]},
   ]},
   {id:'natu',nm:'Naturales',ico:'🌱',c:'#34ad62',temas:[
@@ -1644,7 +1662,7 @@ function buildVocab(){const L=[];const art=(w,es)=>ART[w]||('el '+es);
   V.halloween.forEach(([w,e,es])=>L.push({w,es,cat:'halloween',pic:e,s:`Look at the ${w}!`,ses:`¡Mira ${art(w,es)}!`}));
   V.school.forEach(([w,e,es,ses])=>L.push({w,es,cat:'school',pic:e,s:w==='scissors'?'These are my scissors.':`This is my ${w}.`,ses}));
   V.toys.forEach(([w,e,es,ses])=>L.push({w,es,cat:'toys',pic:e,s:`I've got a ${w}.`,ses}));
-  V.family.forEach(([w,e,es,ses])=>L.push({w,es,cat:'family',pic:e,s:w==='baby'?'This is the baby.':`This is my ${w}.`,ses}));
+  V.family.forEach(([w,e,es,ses])=>L.push({w,es,cat:'family',pic:e,s:`This is my ${w}.`,ses}));
   V.weather.forEach(([w,e,es,s1,s2])=>L.push({w,es,cat:'weather',pic:e,s:s1,ses:s2}));
   V.emotions.forEach(([w,e,es])=>L.push({w,es,cat:'emotions',pic:e,s:`I am ${w}.`,ses:`Estoy ${es}.`}));
   V.body.forEach(([w,e,es])=>L.push({w,es,cat:'body',pic:e,s:`Touch your ${w}!`,ses:`¡Tócate ${art(w,es)}!`}));
